@@ -1,0 +1,66 @@
+Plano de Desenvolvimento — Etapa 1
+Licenciatura em Engenharia Informática — Laboratórios de Informática II
+Universidade do Minho
+
+Objetivo da Etapa 1:
+--------------------
+Desenvolver o motor básico do jogo, permitindo:
+1. Visualizar o tabuleiro.
+2. Selecionar casas por coordenadas.
+3. Pintar uma casa de branco (letra maiúscula).
+4. Riscar uma casa (colocar #).
+
+Análise do Problema:
+--------------------
+- O jogo é baseado num tabuleiro (matriz) de letras minúsculas.
+- O utilizador pode modificar o estado das casas através de comandos:
+    - "b <coordenada>" para pintar de branco (ex: b a1)
+    - "r <coordenada>" para riscar (ex: r b2)
+- O programa deve seguir um ciclo REPL (Read-Eval-Print Loop).
+
+Estrutura de Dados:
+-------------------
+- Representar o tabuleiro como uma matriz dinâmica de caracteres.
+- Utilizar uma estrutura (struct) para armazenar:
+    - Número de linhas e colunas.
+    - A matriz em si.
+
+Exemplo de estrutura:
+    typedef struct {
+        int linhas;
+        int colunas;
+        char **matriz;
+    } Tabuleiro;
+
+Funcionalidades a Implementar:
+------------------------------
+- mostrar_tabuleiro(): Imprime o estado atual do tabuleiro.
+- carregar_jogo(): Lê o tabuleiro de um ficheiro.
+- converter_coordenada(): Converte coordenadas do tipo "b3" para índices da matriz.
+- pintar_casa(): Coloca a letra da casa em maiúscula.
+- riscar_casa(): Substitui o valor da casa por "#".
+- interpretar_comando(): Interpreta os comandos no ciclo REPL.
+
+Comandos Suportados:
+--------------------
+- b <coordenada>: Pinta a casa correspondente de branco (maiúscula).
+- r <coordenada>: Risca a casa correspondente.
+- s: Sai do programa.
+
+Estratégia de Implementação:
+----------------------------
+1. Criar a estrutura de dados e implementar a função de carregamento do tabuleiro.
+2. Implementar a visualização do tabuleiro.
+3. Desenvolver o ciclo REPL e a interpretação dos comandos.
+4. Adicionar os comandos de pintar e riscar casas.
+5. Validar as coordenadas e entradas do utilizador.
+6. Escrever testes com CUnit.
+7. Verificar a cobertura de código utilizando gcov.
+
+Critérios Técnicos:
+-------------------
+- Compilar com as flags:
+    -Wall -Wextra -pedantic -O1 -fsanitize=address -fno-omit-frame-pointer -g
+- Incluir um Makefile com os targets:
+    make jogo    → Para criar o executável do jogo.
+    make testar → Para executar os testes.
