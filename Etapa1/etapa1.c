@@ -30,18 +30,14 @@ void pintaBranco(int linhas, int colunas){
     printf("Erro! Input incorreto.");
     return;
 }
-if (ponto.x < 0 || ponto.x >= colunas || ponto.y < 0 || ponto.y >= linhas) {
-    printf("Coordenadas fora do limite!\n");
-    return;
-    
-    for (int i = 1; i < linhas; i++){
-        for (int j = 1; j < colunas; j++){
+    for (int i = 0; i < linhas; i++){
+        for (int j = 0; j < colunas; j++){
             if (i == ponto.y && j == ponto.x)
-            tabuleiro[i-1][j-1]= tabuleiro[i-1][j-1] - 32;
+            tabuleiro[i][j]= tabuleiro[i][j] - 32;
     }
     }
 }
-}
+
 
 void riscaQuadrado(int linhas, int colunas){
     Coordenadas ponto;
@@ -51,10 +47,10 @@ void riscaQuadrado(int linhas, int colunas){
     printf("Erro! Input incorreto.");
     return;
 }
-    for (int i = 1; i < linhas; i++){
-        for (int j = 1; j < colunas; j++){
+    for (int i = 0; i < linhas; i++){
+        for (int j = 0; j < colunas; j++){
             if (i == ponto.y && j == ponto.x)
-            tabuleiro[i-1][j-1]= '#';
+            tabuleiro[i][j]= '#';
     }
     }
     imprimeTabuleiro(tabuleiro, 5, 5);
