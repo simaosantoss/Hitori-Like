@@ -7,11 +7,6 @@
 // foi SEM chat, usei para perceber como ia implementar uma funcionalidade mas de resto foi sem chat
 // é muito facil de perceber (se não fosse eu não sabia fazer) mas se tiverem duvidas é só perguntar
 // caso haja algo que não gostem mudem ou se acharem que estava melhor antes é só ir ao histórico de commits e revertem
- 
-typedef struct coordenadas {
-    int x;
-    int y;
-} Coordenadas;
 
 char tabuleiro[5][5] = {
     {'e', 'c', 'a', 'd', 'c'},
