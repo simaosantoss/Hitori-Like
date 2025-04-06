@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <ctype.h>  // Necessário para a função toupper()
+#include "etapa1.h"
 
 // Estes comentarios depois sao apagados manos, isto é só para explicar o que fiz e para não estarem aqui às cegas
 // esta versão segue exatamente o que é pedido no enunciado, mas se não perceberem o porque de algo vejam o enunciado mais concretamente a parte "Comandos a implementar"
