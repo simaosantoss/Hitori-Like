@@ -6,13 +6,14 @@ typedef struct coordenadas {
     int y;
 } Coordenadas;
 
-// Função para imprimir o tabuleiro
-void imprimeTabuleiro(char a[5][5], int linhas, int colunas);
+char **criaTabuleiro(int linhas, int colunas);
 
-// Função para pintar de branco (tornar a letra maiúscula)
-void pintaBranco(int linhas, int colunas, Coordenadas ponto);
+void imprimeTabuleiro(char **tabuleiro, int linhas, int colunas);
 
-// Função para riscar a casa (substituir por '#')
-void riscaQuadrado(int linhas, int colunas, Coordenadas ponto);
+void pintaBranco(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
+
+void riscaQuadrado(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
+
+void lerComando(char **tabuleiro, int linhas, int colunas);
 
 #endif
