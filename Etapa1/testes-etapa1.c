@@ -1,63 +1,158 @@
-#include <stdio.h>
-#include <ctype.h>
+#include <stdio.h> 
+#include <stdlib.h>
+#include <CUnit/Basic.h>
 #include "etapa1.h"
-#include <CUnit/Basic.h>  // Inclusão do CUnit para os testes -> isto está me a dar erro mas eu estive a ver a documentação CUnit na net e acho que isto está bem, é parecido com HUnit do haskell
-// só não sei dar labels a testes
 
-// !! 
-// A makefile ainda não tem isto porque não pode pelo menos no meu pc em que o cunit ainda não está bem configurado
+// Função auxiliar para preencher o tabuleiro com os valores iniciais do enunciado
+// Tabuleiro inicial:
+//   e c a d c
+//   d c d e c
+//   b d d c e
+//   c d e e b
+//   a c c b b
 
-// Teste para verificar a função 'pintaBranco'
-void test_pintaBranco() {
-    Coordenadas ponto;
-
-    // Coordenada a1 (casa da letra 'e')
-    ponto.x = 0; ponto.y = 0;  // Coordenada a1
-    pintaBranco(5, 5, ponto);
-    CU_ASSERT_EQUAL(tabuleiro[ponto.y][ponto.x], 'E');  // Deve ser 'E' após ser pintada de branco
+void preencherTabuleiro(char **tabuleiro, int linhas, int colunas) {
+    char init[5][5] = {
+        {'e', 'c', 'a', 'd', 'c'},
+        {'d', 'c', 'd', 'e', 'c'},
+        {'b', 'd', 'd', 'c', 'e'},
+        {'c', 'd', 'e', 'e', 'b'},
+        {'a', 'c', 'c', 'b', 'b'}
+    };
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            tabuleiro[i][j] = init[i][j];
+        }
+    }
 }
 
-// Teste para verificar a função 'riscaQuadrado'
-void test_riscaQuadrado() {
-    Coordenadas ponto;
-
-    // Coordenada c3 (casa da letra 'd')
-    ponto.x = 2; ponto.y = 2;  // Coordenada c3
-    riscaQuadrado(5, 5, ponto);
-    CU_ASSERT_EQUAL(tabuleiro[ponto.y][ponto.x], '#');  // Deve ser '#' após ser riscada
+// Testa se a criaTabuleiro aloca corretamente a memória para um tabuleiro 5x5
+void test_criaTabuleiro(void) {
+    int linhas = 5, colunas = 5;
+    char **tab = criaTabuleiro(linhas, colunas);
+    CU_ASSERT_PTR_NOT_NULL(tab);
+    for (int i = 0; i < linhas; i++) {
+        CU_ASSERT_PTR_NOT_NULL(tab[i]);
+    }
+    // Liberta a memória alocada
+    for (int i = 0; i < linhas; i++) {
+        free(tab[i]);
+    }
+    free(tab);
 }
 
-// Teste para coordenadas inválidas
-void test_coordenadaInvalida() {
-    Coordenadas ponto;
-
-    // Coordenada fora dos limites do tabuleiro (5,5)
-    ponto.x = 5; ponto.y = 5;
-    pintaBranco(5, 5, ponto);  // Não deve alterar nada
-    CU_ASSERT_EQUAL(tabuleiro[4][4], 'b');  // A última casa não deve ser alterada
-}
-
-
-// ok, esta main foi chat porque eu nao sabia fazer main aqui, e não a percebi. Só meti aqui para ver se dava bem e para ver se vocês queriam ver. Tudo o que está acima
-// foi TOTALMENTE sem chat, porque é como haskell basicamente. Esta main ou se altera ou se percebe, eu não a consigo perceber agora (é uma da manhã)
-
-int main() {
-    // Inicializa os testes
-    CU_initialize_registry();
+// Testa se a pintaBranco converte a letra para maiúscula
+void test_pintaBranco(void) {
+    int linhas = 5, colunas = 5;
+    char **tab = criaTabuleiro(linhas, colunas);
+    preencherTabuleiro(tab, linhas, colunas);
     
-    // Adiciona a suite de testes
-    CU_pSuite suite = CU_add_suite("Testes Tabuleiro", 0, 0);
+    Coordenadas ponto;
+    // Testa a coordenada a1 (linha 0, coluna 0): 'e' deve tornar-se 'E'
+    ponto.x = 0; // 'a' corresponde à coluna 0
+    ponto.y = 0; // 1 corresponde à linha 0
+    pintaBranco(tab, linhas, colunas, ponto);
+    CU_ASSERT_EQUAL(tab[0][0], 'E');
+    
+    // Testa outra coordenada: d2 (linha 1, coluna 3)
+    // Na linha 1 (segunda linha): { 'd', 'c', 'd', 'e', 'c' }
+    // A casa na coluna 3 é 'e', que deve tornar-se 'E'
+    ponto.x = 3; 
+    ponto.y = 1;
+    pintaBranco(tab, linhas, colunas, ponto);
+    CU_ASSERT_EQUAL(tab[1][3], 'E');
+    
+    // Liberta a memória
+    for (int i = 0; i < linhas; i++) {
+        free(tab[i]);
+    }
+    free(tab);
+}
+
+// Testa se riscaQuadrado substitui a letra por '#'
+void test_riscaQuadrado(void) {
+    int linhas = 5, colunas = 5;
+    char **tab = criaTabuleiro(linhas, colunas);
+    preencherTabuleiro(tab, linhas, colunas);
+    
+    Coordenadas ponto;
+    // Testa a coordenada c3 (linha 2, coluna 2)
+    // Na linha 2: { 'b', 'd', 'd', 'c', 'e' } -> a posição [2][2] contém 'd'
+    ponto.x = 2;
+    ponto.y = 2;
+    riscaQuadrado(tab, linhas, colunas, ponto);
+    CU_ASSERT_EQUAL(tab[2][2], '#');
+    
+    // Testa outra coordenada, por exemplo, b1 (linha 0, coluna 1)
+    // Na linha 0: { 'e', 'c', 'a', 'd', 'c' } -> posição [0][1] contém 'c'
+    ponto.x = 1;
+    ponto.y = 0;
+    riscaQuadrado(tab, linhas, colunas, ponto);
+    CU_ASSERT_EQUAL(tab[0][1], '#');
+    
+    // Liberta a memória
+    for (int i = 0; i < linhas; i++) {
+        free(tab[i]);
+    }
+    free(tab);
+}
+
+// Testa que, quando se fornecem coordenadas inválidas, o tabuleiro não é alterado
+void test_coordenadaInvalida(void) {
+    int linhas = 5, colunas = 5;
+    char **tab = criaTabuleiro(linhas, colunas);
+    preencherTabuleiro(tab, linhas, colunas);
+    
+    // Salva o valor original de uma casa, por exemplo, a1
+    char original = tab[0][0];  // 'e'
+    
+    Coordenadas ponto;
+    // Coordenada inválida: fora do limite (por exemplo, 6, 0) [linha 7 inexistente]
+    ponto.x = 0;
+    ponto.y = 6;
+    pintaBranco(tab, linhas, colunas, ponto);
+    CU_ASSERT_EQUAL(tab[0][0], original);
+    
+    // Testa com riscaQuadrado com coordenada inválida (por exemplo, 0, 6)
+    ponto.x = 0;
+    ponto.y = 6;
+    riscaQuadrado(tab, linhas, colunas, ponto);
+    CU_ASSERT_EQUAL(tab[0][0], original);
+    
+    // Liberta a memória
+    for (int i = 0; i < linhas; i++) {
+        free(tab[i]);
+    }
+    free(tab);
+}
+
+int main(void) {
+    // Inicializa o registro do CUnit
+    if (CU_initialize_registry() != CUE_SUCCESS) {
+        return CU_get_error();
+    }
+    
+    // Adiciona uma suite de testes
+    CU_pSuite suite = CU_add_suite("Suite Etapa1", 0, 0);
+    if (suite == NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
     
     // Adiciona os testes à suite
-    CU_add_test(suite, "Testar pintaBranco", test_pintaBranco);
-    CU_add_test(suite, "Testar riscaQuadrado", test_riscaQuadrado);
-    CU_add_test(suite, "Testar coordenadas inválidas", test_coordenadaInvalida);
+    if (CU_add_test(suite, "Teste criaTabuleiro", test_criaTabuleiro) == NULL ||
+        CU_add_test(suite, "Teste pintaBranco", test_pintaBranco) == NULL ||
+        CU_add_test(suite, "Teste riscaQuadrado", test_riscaQuadrado) == NULL ||
+        CU_add_test(suite, "Teste coordenadas inválidas", test_coordenadaInvalida) == NULL)
+    {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
     
-    // Executa os testes
+    // Executa os testes com modo verboso
+    CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
-    
-    // Finaliza os testes
     CU_cleanup_registry();
     
-    return 0;
+    return CU_get_error();
 }
