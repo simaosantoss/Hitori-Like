@@ -103,17 +103,17 @@ void test_coordenadaInvalida(void) {
     char **tab = criaTabuleiro(linhas, colunas);
     preencherTabuleiro(tab, linhas, colunas);
     
-    // Salva o valor original de uma casa, por exemplo, a1
+    // Salva o valor original de uma casa, neste caso, a1
     char original = tab[0][0];  // 'e'
     
     Coordenadas ponto;
-    // Coordenada inválida: fora do limite (por exemplo, 6, 0) [linha 7 inexistente]
+    // Coordenada inválida: fora do limite (6, 0) [linha 7 não existe]
     ponto.x = 0;
     ponto.y = 6;
     pintaBranco(tab, linhas, colunas, ponto);
     CU_ASSERT_EQUAL(tab[0][0], original);
     
-    // Testa com riscaQuadrado com coordenada inválida (por exemplo, 0, 6)
+    // Testa com riscaQuadrado com coordenada inválida (0, 6)
     ponto.x = 0;
     ponto.y = 6;
     riscaQuadrado(tab, linhas, colunas, ponto);
