@@ -64,3 +64,5 @@ Critérios Técnicos:
 - Incluir um Makefile com os targets:
     make jogo    → Para criar o executável do jogo.
     make testar → Para executar os testes.
+
+.
