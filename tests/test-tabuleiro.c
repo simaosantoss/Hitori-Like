@@ -1,7 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h>
 #include <CUnit/Basic.h>
-#include "etapa1.h"
+#include "tabuleiro.h"
 
 // Função auxiliar para preencher o tabuleiro com os valores iniciais do enunciado
 // Tabuleiro inicial:

@@ -1,5 +1,5 @@
-#ifndef ETAPA1_H
-#define ETAPA1_H
+#ifndef TABULEIRO_H
+#define TABULEIRO_H
 
 typedef struct coordenadas {
     int x;
@@ -15,7 +15,5 @@ void imprimeTabuleiro(char **tabuleiro, int linhas, int colunas);
 void pintaBranco(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
 
 void riscaQuadrado(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
-
-void lerComando(char **tabuleiro, int linhas, int colunas);
 
 #endif

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "etapa1.h"
+#include "tabuleiro.h"
+#include "interface.h"
 
 int main(void) {
     int linhas, colunas;
