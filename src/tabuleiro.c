@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>  // para isupper, tolower
 #include "tabuleiro.h"
 
 char **criaTabuleiro(int linhas, int colunas){
@@ -25,15 +26,35 @@ void imprimeTabuleiro(char **tabuleiro, int linhas, int colunas) {
 }
 
 void pintaBranco(char **tabuleiro, int linhas, int colunas, Coordenadas ponto) {
-    if (ponto.x >= 0 && ponto.x < colunas && ponto.y >= 0 && ponto.y < linhas)
-        tabuleiro[ponto.y][ponto.x] = tabuleiro[ponto.y][ponto.x] - 32;
-    else
+    if (ponto.x >= 0 && ponto.x < colunas && ponto.y >= 0 && ponto.y < linhas) {
+        char atual = tabuleiro[ponto.y][ponto.x];
+        if (isupper(atual)) {
+            printf("Erro: já está pintado de branco.\n");
+            return;
+        }
+        if (atual == '#') {
+            printf("Erro: não se pode pintar uma casa riscada.\n");
+            return;
+        }
+        tabuleiro[ponto.y][ponto.x] = toupper(atual);
+    } else {
         printf("Coordenada inválida!\n");
+    }
 }
 
 void riscaQuadrado(char **tabuleiro, int linhas, int colunas, Coordenadas ponto) {
-    if (ponto.x >= 0 && ponto.x < colunas && ponto.y >= 0 && ponto.y < linhas)
+    if (ponto.x >= 0 && ponto.x < colunas && ponto.y >= 0 && ponto.y < linhas) {
+        char atual = tabuleiro[ponto.y][ponto.x];
+        if (atual == '#') {
+            printf("Erro: já está riscado.\n");
+            return;
+        }
+        if (isupper(atual)) {
+            printf("Erro: não se pode riscar uma casa pintada de branco.\n");
+            return;
+        }
         tabuleiro[ponto.y][ponto.x] = '#';
-    else
+    } else {
         printf("Coordenada inválida!\n");
+    }
 }

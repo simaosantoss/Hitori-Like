@@ -1,0 +1,40 @@
+(simão) após os apontamentos que tirei quando a prof falou, captei:
+
+Planeamento de Correções e Melhorias para o Projeto
+
+1. **Uso de `CU_assert_fail` em testes**
+   - Modificar os testes existentes para utilizar `CU_assert_fail` quando for esperado um erro.
+   - Testar comportamentos inválidos, como tentar pintar uma casa que já está pintada de branco ou riscar uma casa já riscada.
+
+2. **Evitar alterar letras já maiúsculas**
+   - **Correção**: Alterar a função `pintaBranco` para não pintar de branco uma casa que já está em maiúscula (ou seja, já foi pintada de branco).
+   - Antes de pintar, verificar se a casa já está em maiúscula e, em caso afirmativo, não fazer nada.
+
+3. **Evitar riscar letras maiúsculas**
+   - **Correção**: Alterar a função `riscaQuadrado` para verificar se a casa já é maiúscula.
+   - Se for maiúscula, convertê-la de volta para minúscula antes de substituí-la por `#`.
+
+4. **Ler tabuleiro predefinido a partir de um ficheiro**
+   - **Correção**: Modificar a função `recebeTabuleiro` para que ela leia o tabuleiro de um arquivo em vez de solicitar ao usuário que insira os dados manualmente.
+   - Implementar uma função para abrir e ler um arquivo que contenha o tabuleiro.
+
+5. **Implementar gravações**
+   - **Correção**: Implementar uma estrutura de pilha (stack) para armazenar movimentos válidos.
+   - Cada movimento deve incluir a ação realizada (ex: pintar ou riscar uma casa) e as coordenadas envolvidas.
+   - Implementar o comando "desfazer" (undo) usando a pilha para reverter o último movimento válido.
+
+6. **Verificar se a pintura é fora do tabuleiro**
+   - **Correção**: Adicionar verificações nas funções `pintaBranco` e `riscaQuadrado` para garantir que as coordenadas fornecidas estejam dentro dos limites do tabuleiro antes de qualquer ação.
+
+7. **Evitar pintar branco em cima de branco**
+   - **Correção**: Na função `pintaBranco`, antes de pintar, verificar se a casa já está pintada de branco (maiúscula).
+   - Se a casa já for maiúscula, não fazer nada.
+
+8. **Verificar se a ação faz sentido na linha e na coluna**
+   - **Correção**: Antes de pintar ou riscar, incluir verificações adicionais para garantir que a ação é válida de acordo com as regras do jogo.
+   - Verificar se não há repetições de símbolos na linha ou coluna antes de realizar a ação.
+
+9. **Usar pilha para guardar movimentos válidos (não tabuleiro)**
+   - **Correção**: Criar uma estrutura de pilha para armazenar apenas os movimentos válidos (não o estado completo do tabuleiro).
+   - Cada movimento deve ser armazenado com informações sobre a ação (pintar ou riscar) e as coordenadas, permitindo a reversão via "desfazer".
+
