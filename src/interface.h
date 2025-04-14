@@ -1,6 +1,9 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-void lerComando(char **tabuleiro, int linhas, int colunas);
+#include "stack.h"
+
+/* Lê comandos REPL e manipula o tabuleiro. Usa a stack para undo. */
+void lerComando(char ***tabuleiro, int *linhas, int *colunas, StackMovimentos *stack);
 
 #endif
