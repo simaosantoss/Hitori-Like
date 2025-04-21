@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tabuleiro.h" 
 
 /**
  * Liberta a memória alocada para o tabuleiro.
@@ -12,6 +11,40 @@ void libertaMemoria(char **tabuleiro, int linhas) {
         free(tabuleiro[i]);
     }
     free(tabuleiro);
+}
+
+/**
+ * Cria um tabuleiro com o número especificado de linhas e colunas.
+ * Aloca memória para o tabuleiro e inicializa cada posição.
+ */
+char **criarTabuleiro(int linhas, int colunas) {
+    char **tabuleiro = (char **)malloc(linhas * sizeof(char *));
+    if (!tabuleiro) {
+        printf("Erro ao alocar memória para o tabuleiro.\n");
+        return NULL;
+    }
+
+    for (int i = 0; i < linhas; i++) {
+        tabuleiro[i] = (char *)malloc(colunas * sizeof(char));
+        if (!tabuleiro[i]) {
+            printf("Erro ao alocar memória para a linha %d do tabuleiro.\n", i);
+            // Libera memória alocada até o momento
+            for (int j = 0; j < i; j++) {
+                free(tabuleiro[j]);
+            }
+            free(tabuleiro);
+            return NULL;
+        }
+    }
+
+    // Inicializa o tabuleiro com espaços vazios ou algum valor padrão
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            tabuleiro[i][j] = ' ';  // Inicializa com um espaço vazio
+        }
+    }
+
+    return tabuleiro;
 }
 
 /**
@@ -52,7 +85,7 @@ char **lerTabuleiroFicheiro(const char *nomeFicheiro, int *linhas, int *colunas)
     fseek(ficheiro, posInicioTabuleiro, SEEK_SET);
 
     // Cria o tabuleiro
-    char **tabuleiro = criaTabuleiro(totalLinhas, totalColunas);
+    char **tabuleiro = criarTabuleiro(totalLinhas, totalColunas);
     if (!tabuleiro) {
         fclose(ficheiro);
         return NULL;

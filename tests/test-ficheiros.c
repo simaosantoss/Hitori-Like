@@ -4,15 +4,9 @@
 #include <CUnit/Basic.h>
 #include "ficheiros.h"
 
-void test_gravarElerFicheiro(void) {
-    /* Cria um tabuleiro 5x5 de teste */
+void testGravarELerValido(void) {
     int linhas = 5, colunas = 5;
     char **tabuleiro = malloc(linhas * sizeof(char *));
-    for (int i = 0; i < linhas; i++) {
-        tabuleiro[i] = malloc(colunas * sizeof(char));
-    }
-
-    /* Padrão esperado */
     char pattern[5][6] = {
         "ecadc",
         "dcdec",
@@ -22,56 +16,83 @@ void test_gravarElerFicheiro(void) {
     };
 
     for (int i = 0; i < linhas; i++) {
+        tabuleiro[i] = malloc(colunas * sizeof(char));
         for (int j = 0; j < colunas; j++) {
             tabuleiro[i][j] = pattern[i][j];
         }
     }
 
-    /* Grava para um ficheiro temporário */
-    int res = gravarEmFicheiro("temp_test.txt", tabuleiro, linhas, colunas);
-    CU_ASSERT_EQUAL(res, 1);
+    CU_ASSERT_EQUAL(gravarTabuleiroFicheiro("testeOk.txt", tabuleiro, linhas, colunas), 1);
 
-    /* Agora, lê de volta o ficheiro */
-    char **lido = lerTabuleiroPorDimensoes("temp_test.txt", &linhas, &colunas);
+    int lidas = 0, cols = 0;
+    char **lido = lerTabuleiroFicheiro("testeOk.txt", &lidas, &cols);
     CU_ASSERT_PTR_NOT_NULL(lido);
+    CU_ASSERT_EQUAL(lidas, linhas);
+    CU_ASSERT_EQUAL(cols, colunas);
+
     if (lido) {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
                 CU_ASSERT_EQUAL(lido[i][j], pattern[i][j]);
             }
-        }
-        for (int i = 0; i < 5; i++) {
             free(lido[i]);
         }
         free(lido);
     }
 
-    /* Limpa o ficheiro temporário */
-    remove("temp_test.txt");
-
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < linhas; i++) {
         free(tabuleiro[i]);
+    }
     free(tabuleiro);
+    remove("testeOk.txt");
+}
+
+void testArquivoInexistente(void) {
+    int linhas = 0, colunas = 0;
+    char **tabuleiro = lerTabuleiroFicheiro("naoExiste.txt", &linhas, &colunas);
+    CU_ASSERT_PTR_NULL(tabuleiro);
+}
+
+void testFicheiroVazio(void) {
+    FILE *f = fopen("vazio.txt", "w");
+    fclose(f);
+
+    int linhas = 0, colunas = 0;
+    char **tabuleiro = lerTabuleiroFicheiro("vazio.txt", &linhas, &colunas);
+    CU_ASSERT_PTR_NULL(tabuleiro);
+    remove("vazio.txt");
+}
+
+void testFormatoInvalido(void) {
+    FILE *f = fopen("invalido.txt", "w");
+    fprintf(f, "isto nao tem letras do tabuleiro\noutra linha mal\n");
+    fclose(f);
+
+    int linhas = 0, colunas = 0;
+    char **tabuleiro = lerTabuleiroFicheiro("invalido.txt", &linhas, &colunas);
+    CU_ASSERT_PTR_NOT_NULL(tabuleiro); // Ainda pode alocar, mesmo se dados errados
+    // Opcional: validar que os dados lidos não batem certo
+    libertaMemoria(tabuleiro, linhas);
+    remove("invalido.txt");
 }
 
 int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         return CU_get_error();
 
-    CU_pSuite suite = CU_add_suite("Suite_Ficheiros", 0, 0);
+    CU_pSuite suite = CU_add_suite("TestesFicheiros", NULL, NULL);
     if (!suite) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    if (!CU_add_test(suite, "Teste gravar e ler ficheiro", test_gravarElerFicheiro)) {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
+    CU_add_test(suite, "Gravar e Ler Tabuleiro Valido", testGravarELerValido);
+    CU_add_test(suite, "Ficheiro Inexistente", testArquivoInexistente);
+    CU_add_test(suite, "Ficheiro Vazio", testFicheiroVazio);
+    CU_add_test(suite, "Formato Invalido", testFormatoInvalido);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
-
     return CU_get_error();
 }

@@ -10,8 +10,9 @@ OBJS_JOGO = src/main.o src/tabuleiro.o src/interface.o src/ficheiros.o src/stack
 OBJS_TEST_TABULEIRO = tests/test-tabuleiro.o src/tabuleiro.o
 OBJS_TEST_STACK = tests/test-stack.o src/stack.o
 OBJS_TEST_FICHEIROS = tests/test-ficheiros.o src/ficheiros.o
+OBJS_TEST_INTERFACE = tests/test-interface.o src/interface.o src/tabuleiro.o src/ficheiros.o src/stack.o
 
-.PHONY: all jogo teste_tabuleiro teste_stack teste_ficheiros testar clean
+.PHONY: all jogo teste_tabuleiro teste_stack teste_ficheiros teste_interface testar clean
 
 # Target padrão: compilar o executável "jogo"
 all: jogo
@@ -61,15 +62,24 @@ teste_ficheiros: $(OBJS_TEST_FICHEIROS)
 tests/test-ficheiros.o: tests/test-ficheiros.c src/ficheiros.h
 	$(CC) $(CFLAGS) -c tests/test-ficheiros.c -o tests/test-ficheiros.o
 
+# Compilar teste para o módulo interface
+teste_interface: $(OBJS_TEST_INTERFACE)
+	$(CC) $(CFLAGS) $(OBJS_TEST_INTERFACE) -o teste_interface $(LIBS)
+
+tests/test-interface.o: tests/test-interface.c src/interface.h src/tabuleiro.h src/stack.h src/ficheiros.h
+	$(CC) $(CFLAGS) -c tests/test-interface.c -o tests/test-interface.o
+
 # Target "testar": compila e executa todos os testes
-testar: teste_tabuleiro teste_stack teste_ficheiros
+testar: teste_tabuleiro teste_stack teste_ficheiros teste_interface
 	@echo "Executando teste de tabuleiro..."
 	./teste_tabuleiro
 	@echo "Executando teste de stack..."
 	./teste_stack
 	@echo "Executando teste de ficheiros..."
 	./teste_ficheiros
+	@echo "Executando teste de interface..."
+	./teste_interface
 
 # Target "clean": remove ficheiros objeto e executáveis
 clean:
-	rm -f src/*.o tests/*.o jogo teste_tabuleiro teste_stack teste_ficheiros
+	rm -f src/*.o tests/*.o jogo teste_tabuleiro teste_stack teste_ficheiros teste_interface
