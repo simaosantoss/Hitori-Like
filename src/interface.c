@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> // para strcmp
-#include "tabuleiro.h"
+#include <string.h>
+#include "tabuleiro.h" 
 #include "interface.h"
 #include "ficheiros.h"
 #include "stack.h"
@@ -20,6 +20,8 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
         }
         if (strcmp(comando, "s") == 0) {
             printf("A sair do programa...\n");
+            // Antes de sair, liberar a memória do tabuleiro
+            libertaMemoria(*ptabuleiro, *linhas);
             break;
         }
         else if (strcmp(comando, "b") == 0) {
@@ -90,14 +92,11 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
                 printf("Ficheiro inválido!\n");
                 continue;
             }
-            // Libertamos tabuleiro antigo
-            for (int i = 0; i < *linhas; i++) {
-                free((*ptabuleiro)[i]);
-            }
-            free(*ptabuleiro);
+            // Libertamos tabuleiro antigo antes de carregar o novo
+            libertaMemoria(*ptabuleiro, *linhas);
 
-            // Lemos do ficheiro
-            char **novo = lerTabuleiroPorDimensoes(nomeFich, linhas, colunas);
+            // Lemos o novo tabuleiro do ficheiro
+            char **novo = lerTabuleiroFicheiro(nomeFich, linhas, colunas);
             if (!novo) {
                 // Falhou, repor algo?
                 *linhas = *colunas = 0;
@@ -116,7 +115,7 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
                 printf("Ficheiro inválido!\n");
                 continue;
             }
-            gravarEmFicheiro(nomeFich, *ptabuleiro, *linhas, *colunas);
+            gravarTabuleiroFicheiro(nomeFich, *ptabuleiro, *linhas, *colunas);
         }
         else {
             printf("Comando inválido!\n");

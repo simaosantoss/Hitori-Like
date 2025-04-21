@@ -6,7 +6,7 @@ void initStack(StackMovimentos *stack) {
     stack->topo = NULL; 
 }
 
-/* Empilha um movimento */
+// Empilha um movimento 
 void push(StackMovimentos *stack, Movimento mov) {
     Nodo *novo = malloc(sizeof(Nodo));
     if (!novo) return; // Falha de alocação, caso raro
@@ -15,7 +15,7 @@ void push(StackMovimentos *stack, Movimento mov) {
     stack->topo = novo;
 }
 
-/* Desempilha */
+// Desempilha 
 int pop(StackMovimentos *stack, Movimento *mov) {
     if (!stack->topo) {
         return 0; // stack vazia

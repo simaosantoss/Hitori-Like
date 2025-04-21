@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tabuleiro.h"
 #include "interface.h"
 #include "stack.h"
@@ -7,20 +8,30 @@
 
 int main(void) {
     int linhas, colunas;
-    
-    // Solicita as dimensões do tabuleiro ao utilizador.
-    printf("Insira as dimensões do tabuleiro (ex: 5 5): ");
-    if (scanf("%d %d", &linhas, &colunas) != 2) {
-        printf("Dimensões inválidas.\n");
-        return 1;
-    }
+    char nomeFicheiro[64];  // Variável para armazenar o nome do ficheiro
+    char comando[2];  // Variável para armazenar o comando 'l'
 
-    // Tenta ler do ficheiro "tabuleiros.txt" o tabuleiro com as dimensões especificadas.
-    // O ficheiro deve estar no mesmo diretório onde o programa é executado.
-    char **tabuleiro = lerTabuleiroPorDimensoes("tabuleiros.txt", &linhas, &colunas);
-    if (!tabuleiro) {
-        printf("Não foi encontrado um tabuleiro com dimensões %dx%d no ficheiro.\n", linhas, colunas);
-        return 1;
+    char **tabuleiro = NULL;  // Declarar o tabuleiro fora do loop para ser acessível depois
+
+    // Solicita obrigatoriamente o comando 'l <ficheiro>'
+    while (1) {
+        printf("Digite o comando 'l <ficheiro>' para ler o tabuleiro:\n");
+        if (scanf(" %s %s", comando, nomeFicheiro) != 2) {
+            printf("Comando inválido! Use 'l <ficheiro>' para ler o tabuleiro.\n");
+            continue; // Solicita novamente o comando
+        }
+
+        if (strcmp(comando, "l") == 0) {
+            // Tenta ler o tabuleiro do ficheiro fornecido.
+            tabuleiro = lerTabuleiroFicheiro(nomeFicheiro, &linhas, &colunas);
+            if (!tabuleiro) {
+                printf("Erro ao ler o tabuleiro do ficheiro '%s'.\n", nomeFicheiro);
+                continue;  // Solicita novamente o comando
+            }
+            break;  // Tabuleiro lido com sucesso, continua para os outros comandos
+        } else {
+            printf("Comando inválido! Use 'l <ficheiro>' para ler o tabuleiro.\n");
+        }
     }
 
     // Cria e inicializa a stack que armazenará os movimentos (para implementar o comando de "undo").
@@ -41,7 +52,7 @@ int main(void) {
     // Esvazia a stack (libera todos os nós) antes de terminar o programa.
     Movimento mov;
     while (pop(&stack, &mov)) {
-        /* Apenas esvaziamos a stack */
+        // Apenas esvaziamos a stack
     }
 
     return 0;

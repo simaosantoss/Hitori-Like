@@ -5,12 +5,11 @@
    Retorna ponteiro para o tabuleiro alocado. Devolve em *linhas, *colunas o tamanho. 
    Se falhar, devolve NULL e *linhas, *colunas = 0.
 */
-char **lerTabuleiroPorDimensoes(const char *nomeFicheiro, int *linhas, int *colunas);
+char **lerTabuleiroFicheiro(const char *nomeFicheiro, int *linhas, int *colunas);
 
-/* Grava o tabuleiro num ficheiro, com o formato:
-    L C
-    (L linhas com C caracteres cada)
-*/
-int gravarEmFicheiro(const char *nomeFicheiro, char **tabuleiro, int linhas, int colunas);
+int gravarTabuleiroFicheiro(const char *nomeFicheiro, char **tabuleiro, int linhas, int colunas);
+
+/* Liberta a memória alocada para o tabuleiro. Recebe o ponteiro para o tabuleiro, o número de linhas. */
+void libertaMemoria(char **tabuleiro, int linhas);
 
 #endif
