@@ -1,131 +1,110 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include "tabuleiro.h"
 
-/* CriaTabuleiro e recebeTabuleiro inalterados, apenas comentários extras */
-char **criaTabuleiro(int linhas, int colunas){
-    char **tabuleiro = malloc(linhas * sizeof(char *));
-    for (int i = 0; i < linhas; i++)
-        tabuleiro[i] = malloc(colunas * sizeof(char));
-    return tabuleiro;
+char **criaTabuleiro(int linhas,int colunas)
+{
+    char **t = malloc(linhas * sizeof *t);
+    for (int i=0;i<linhas;++i) t[i] = malloc(colunas * sizeof **t);
+    return t;
 }
 
-void recebeTabuleiro(char **tabuleiro, int linhas, int colunas){
-    for (int i = 0; i < linhas; i++)
-        for (int j = 0; j < colunas; j++)
-            if (scanf(" %c", &tabuleiro[i][j]) != 1)
-                return;
+void recebeTabuleiro(char **t,int l,int c)
+{
+    for (int y=0;y<l;++y)
+        for (int x=0;x<c;++x)
+            scanf(" %c",&t[y][x]);
 }
 
-void imprimeTabuleiro(char **tabuleiro, int linhas, int colunas) {
-    // Apenas um print simples
-    for (int i = 0; i < linhas; i++) {
-        for (int j = 0; j < colunas; j++) {
-            printf("%c ", tabuleiro[i][j]);
-        }
-        printf("\n");
+void imprimeTabuleiro(char **t,int l,int c)
+{
+    for (int y=0;y<l;++y){
+        for (int x=0;x<c;++x) printf("%c ",t[y][x]);
+        puts("");
     }
 }
 
-/* Função auxiliar para verificar se já existe a mesma letra maiúscula
-   na linha ou coluna do ponto. Se existir, retorna 1 (verdadeiro),
-   senão retorna 0. */
-static int existeDuplicadoLinhaColuna(char **tab, int lin, int col, Coordenadas p, char letraMaius) {
-    // verifica na linha p.y
-    for (int j = 0; j < col; j++) {
-        if (j != p.x && tab[p.y][j] == letraMaius) {
-            return 1; 
+static int vizinhosSaoBrancos(char **tab,int l,int c,Coordenadas p)
+{
+    if (p.y-1>=0 && !isupper(tab[p.y-1][p.x])) return 0;
+    if (p.y+1< l && !isupper(tab[p.y+1][p.x])) return 0;
+    if (p.x-1>=0 && !isupper(tab[p.y][p.x-1])) return 0;
+    if (p.x+1< c && !isupper(tab[p.y][p.x+1])) return 0;
+    return 1;
+}
+
+int pintaBranco(char **tab,int l,int c,Coordenadas p)
+{
+    if (p.x<0||p.x>=c||p.y<0||p.y>=l){ printf("Coordenada fora do tabuleiro.\n");return 0;}
+    char ch = tab[p.y][p.x];
+    if (isupper(ch))   { puts("Erro: já está pintado de branco.");  return 0; }
+    if (ch=='#')       { puts("Erro: não se pode pintar uma casa riscada."); return 0; }
+
+    tab[p.y][p.x] = toupper(ch);
+    return 1;
+}
+
+int riscaQuadrado(char **tab,int l,int c,Coordenadas p)
+{
+    if (p.x<0||p.x>=c||p.y<0||p.y>=l){ printf("Coordenada fora do tabuleiro.\n");return 0;}
+    char ch = tab[p.y][p.x];
+    if (ch=='#')      { puts("Erro: já está riscado."); return 0; }
+    if (isupper(ch)){ puts("Erro: não se pode riscar uma casa pintada de branco (faça undo primeiro!).");return 0;}
+
+    tab[p.y][p.x] = '#';
+    return 1;
+}
+
+int converteParaMinuscula(char **tab,int l,int c,Coordenadas p)
+{
+    if (p.x<0||p.x>=c||p.y<0||p.y>=l){ printf("Coordenada fora do tabuleiro.\n");return 0;}
+    if (!isupper(tab[p.y][p.x])){ puts("Erro: a casa não está em maiúscula, não faz sentido converter."); return 0; }
+
+    tab[p.y][p.x] = tolower(tab[p.y][p.x]);
+    return 1;
+}
+
+// comando v
+int verificaEstado(char **t,int l,int c)
+{
+    int duplicados=0, hashErr=0, minusculasErr=0;
+
+    int rowU[l][26]; int colU[c][26];
+    memset(rowU,0,sizeof rowU);
+    memset(colU,0,sizeof colU);
+
+    for (int y=0;y<l;++y)
+        for (int x=0;x<c;++x)
+            if (isupper(t[y][x])){
+                int id=t[y][x]-'A';
+                rowU[y][id]++; colU[x][id]++;
+            }
+
+    for (int y=0;y<l;++y)
+        for (int x=0;x<c;++x){
+            char ch=t[y][x];
+            if (isupper(ch) && (rowU[y][ch-'A']>1 || colU[x][ch-'A']>1))
+                duplicados = 1;
+            else if (ch=='#' && !vizinhosSaoBrancos(t,l,c,(Coordenadas){x,y}))
+                hashErr = 1;
+            else if (islower(ch) && (rowU[y][ch-'a'] || colU[x][ch-'a']))
+                minusculasErr = 1;
         }
+
+    if(!duplicados && !hashErr && !minusculasErr){
+        puts("Estado válido - nenhuma restrição violada.");
+        return 1;
     }
-    // verifica na coluna p.x
-    for (int i = 0; i < lin; i++) {
-        if (i != p.y && tab[i][p.x] == letraMaius) {
-            return 1;
-        }
-    }
+
+    puts("Jogo inválido:");
+    if (duplicados)
+        puts("- Há letras brancas repetidas na mesma linha/coluna");
+    if (hashErr)
+        puts("- Existem casas '#' com vizinhos que não estão brancos");
+    if (minusculasErr)
+        puts("- Há letras minúsculas que deviam estar riscadas (#)");
+
     return 0;
-}
-
-/* Verificar se as casas vizinhas (cima, baixo, esquerda, direita) 
-   de (p.y, p.x) estão pintadas de branco. Se alguma não estiver, retorna 0. */
-static int vizinhosSaoBrancos(char **tab, int linhas, int colunas, Coordenadas p) {
-    // cima
-    if (p.y - 1 >= 0 && !isupper(tab[p.y-1][p.x])) return 0;
-    // baixo
-    if (p.y + 1 < linhas && !isupper(tab[p.y+1][p.x])) return 0;
-    // esquerda
-    if (p.x - 1 >= 0 && !isupper(tab[p.y][p.x-1])) return 0;
-    // direita
-    if (p.x + 1 < colunas && !isupper(tab[p.y][p.x+1])) return 0;
-    return 1;
-}
-
-int pintaBranco(char **tabuleiro, int linhas, int colunas, Coordenadas ponto) {
-    if (ponto.x < 0 || ponto.x >= colunas || ponto.y < 0 || ponto.y >= linhas) {
-        printf("Coordenada fora do tabuleiro.\n");
-        return 0;
-    }
-    char atual = tabuleiro[ponto.y][ponto.x];
-    if (isupper(atual)) {
-        // Já está pintado
-        printf("Erro: já está pintado de branco.\n");
-        return 0;
-    }
-    if (atual == '#') {
-        // Já está riscado
-        printf("Erro: não se pode pintar uma casa riscada.\n");
-        return 0;
-    }
-
-    // Vamos transformar em maiúscula e verificar se há duplicados na mesma linha/coluna
-    char maius = toupper(atual);
-    if (existeDuplicadoLinhaColuna(tabuleiro, linhas, colunas, ponto, maius)) {
-        printf("Erro: já existe essa letra em maiúscula na linha ou coluna.\n");
-        return 0;
-    }
-
-    // Se passou nas verificações, pinta
-    tabuleiro[ponto.y][ponto.x] = maius;
-    return 1;
-}
-
-int riscaQuadrado(char **tabuleiro, int linhas, int colunas, Coordenadas ponto) {
-    if (ponto.x < 0 || ponto.x >= colunas || ponto.y < 0 || ponto.y >= linhas) {
-        printf("Coordenada fora do tabuleiro.\n");
-        return 0;
-    }
-    char atual = tabuleiro[ponto.y][ponto.x];
-    if (atual == '#') {
-        printf("Erro: já está riscado.\n");
-        return 0;
-    }
-    if (isupper(atual)) {
-        // Segundo a regra do professor, não podemos riscar direto
-        printf("Erro: não se pode riscar uma casa pintada de branco (faça undo primeiro!).\n");
-        return 0;
-    }
-    // riscar exige que todas as vizinhas ortogonais estejam em maiúscula?
-    // Se for regra, faz se assim
-    if (!vizinhosSaoBrancos(tabuleiro, linhas, colunas, ponto)) {
-        printf("Erro: não pode riscar, pois alguma casa vizinha não está pintada de branco.\n");
-        return 0;
-    }
-
-    tabuleiro[ponto.y][ponto.x] = '#';
-    return 1;
-}
-
-int converteParaMinuscula(char **tabuleiro, int linhas, int colunas, Coordenadas ponto) {
-    if (ponto.x < 0 || ponto.x >= colunas || ponto.y < 0 || ponto.y >= linhas) {
-        printf("Coordenada fora do tabuleiro.\n");
-        return 0;
-    }
-    char atual = tabuleiro[ponto.y][ponto.x];
-    if (!isupper(atual)) {
-        printf("Erro: a casa não está em maiúscula, não faz sentido converter.\n");
-        return 0;
-    }
-    tabuleiro[ponto.y][ponto.x] = tolower(atual);
-    return 1;
 }

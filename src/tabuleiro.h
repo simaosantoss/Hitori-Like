@@ -42,4 +42,7 @@ int riscaQuadrado(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
  */
 int converteParaMinuscula(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
 
+/* devolve 1 se não encontrar problemas, 0 caso contrário */
+int verificaEstado(char **tab, int linhas, int colunas);
+
 #endif

@@ -14,7 +14,7 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
 
     while (1) {
         imprimeTabuleiro(*ptabuleiro, *linhas, *colunas);
-        printf("Digite um comando (b <coord>, r <coord>, f <coord>, l <fic>, g <fic>, d, s, ...):\n");
+        printf("Digite um comando (b <coord>, r <coord>, f <coord>, v, l <fic>, g <fic>, d, s):\n");
         if (scanf(" %s", comando) != 1) {
             continue;
         }
@@ -25,10 +25,17 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
         else if (strcmp(comando, "b") == 0) {
             // pintar de branco
             if (scanf(" %c%d", &letra, &numero) != 2) {
-                printf("Coordenada inválida!\n");
+                printf("Erro: coordenada inválida!\n");
                 continue;
             }
             Coordenadas c = { letra - 'a', numero - 1 };
+
+            // Validação das coordenadas
+            if (c.x < 0 || c.x >= *colunas || c.y < 0 || c.y >= *linhas) {
+                printf("Erro: coordenada fora dos limites!\n");
+                continue;
+            }
+
             char valorAntigo = (*ptabuleiro)[c.y][c.x];
             if (pintaBranco(*ptabuleiro, *linhas, *colunas, c)) {
                 // Se deu certo, empilha
@@ -42,20 +49,27 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
         else if (strcmp(comando, "r") == 0) {
             // riscar
             if (scanf(" %c%d", &letra, &numero) != 2) {
-                printf("Coordenada inválida!\n");
-                continue;
+             printf("Erro: coordenada inválida!\n");
+              continue;
             }
             Coordenadas c = { letra - 'a', numero - 1 };
-            char valorAntigo = (*ptabuleiro)[c.y][c.x];
-            if (riscaQuadrado(*ptabuleiro, *linhas, *colunas, c)) {
-                // se deu certo, empilha
-                Movimento mov;
-                mov.x = c.x; mov.y = c.y;
-                mov.valorAntigo = valorAntigo;
-                mov.valorNovo = (*ptabuleiro)[c.y][c.x];
-                push(stack, mov);
-            }
+
+            // Validação das coordenadas
+            if (c.x < 0 || c.x >= *colunas || c.y < 0 || c.y >= *linhas) {
+                printf("Erro: coordenada fora dos limites!\n");
+                continue;
+         }
+
+        char valorAntigo = (*ptabuleiro)[c.y][c.x];
+        if (riscaQuadrado(*ptabuleiro, *linhas, *colunas, c)) {
+            // Se deu certo, empilha
+            Movimento mov;
+            mov.x = c.x; mov.y = c.y;
+            mov.valorAntigo = valorAntigo;
+            mov.valorNovo = (*ptabuleiro)[c.y][c.x];
+            push(stack, mov);
         }
+    }
         else if (strcmp(comando, "f") == 0) {
             // converter para minúscula
             if (scanf(" %c%d", &letra, &numero) != 2) {
@@ -114,6 +128,9 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
                 continue;
             }
             gravarTabuleiroFicheiro(nomeFich, *ptabuleiro, *linhas, *colunas);
+        }
+        else if (strcmp(comando, "v") == 0) {
+            verificaEstado(*ptabuleiro, *linhas, *colunas);
         }
         else {
             printf("Comando inválido!\n");
