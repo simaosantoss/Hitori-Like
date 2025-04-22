@@ -26,7 +26,7 @@ void testInterfacePintaBrancoComandoValido(void) {
     char **tabuleiro = criaTabuleiro(linhas, colunas);
     preencherTabuleiroTeste(tabuleiro, linhas, colunas);
     StackMovimentos stack;
-    inicializarStack(&stack);
+    initStack(&stack);
 
     Coordenadas c = {0, 0};
     char valorAntigo = tabuleiro[c.y][c.x];
@@ -50,7 +50,7 @@ void testInterfacePintaBrancoComandoInvalido(void) {
     preencherTabuleiroTeste(tabuleiro, linhas, colunas);
 
     StackMovimentos stack;
-    inicializarStack(&stack);
+    initStack(&stack);
 
     Coordenadas c = {9, 9};
     int res = pintaBranco(tabuleiro, linhas, colunas, c);
@@ -67,7 +67,7 @@ void testInterfaceRiscaQuadradoSemVizinhosBrancos(void) {
     char **tabuleiro = criaTabuleiro(linhas, colunas);
     preencherTabuleiroTeste(tabuleiro, linhas, colunas);
     StackMovimentos stack;
-    inicializarStack(&stack);
+    initStack(&stack);
 
     Coordenadas c = {2, 2};
     int res = riscaQuadrado(tabuleiro, linhas, colunas, c);
@@ -84,7 +84,7 @@ void testInterfaceDesfazerMovimento(void) {
     char **tabuleiro = criaTabuleiro(linhas, colunas);
     preencherTabuleiroTeste(tabuleiro, linhas, colunas);
     StackMovimentos stack;
-    inicializarStack(&stack);
+    initStack(&stack);
 
     Coordenadas c = {0, 0};
     char valorAntigo = tabuleiro[c.y][c.x];
@@ -103,7 +103,7 @@ void testInterfaceDesfazerMovimento(void) {
 
 void testInterfaceDesfazerStackVazia(void) {
     StackMovimentos stack;
-    inicializarStack(&stack);
+    initStack(&stack);
     Movimento mov;
     int res = pop(&stack, &mov);
     if (res != 0) {

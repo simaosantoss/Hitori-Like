@@ -16,9 +16,7 @@ typedef struct {
 } StackMovimentos;
 
 /* --- API esperada pelos testes --- */
-void inicializarStack(StackMovimentos *s);   /* novo alias */
 void destruirStack(StackMovimentos *s);      /* libertar toda a memória */
-
 void initStack(StackMovimentos *s);          /* nome usado no main */
 void push(StackMovimentos *s, Movimento m);
 int  pop (StackMovimentos *s, Movimento *m);
