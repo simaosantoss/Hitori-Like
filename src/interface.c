@@ -18,12 +18,10 @@ void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *
         if (scanf(" %s", comando) != 1) {
             continue;
         }
-        if (strcmp(comando, "s") == 0) {
-            printf("A sair do programa...\n");
-            // Antes de sair, liberar a memória do tabuleiro
-            libertaMemoria(*ptabuleiro, *linhas);
-            break;
-        }
+             else if (strcmp(comando, "s") == 0) {
+         printf("A sair do programa...\n");
+         break;              /* main() libertará o tabuleiro uma única vez */
+     }
         else if (strcmp(comando, "b") == 0) {
             // pintar de branco
             if (scanf(" %c%d", &letra, &numero) != 2) {

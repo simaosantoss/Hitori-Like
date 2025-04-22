@@ -1,34 +1,26 @@
 #ifndef STACK_H
 #define STACK_H
 
-typedef struct movimento {
-    int x, y;          // coordenadas do movimento
-    char valorAntigo;  // o que estava antes
-    char valorNovo;    // o que foi colocado
+typedef struct {
+    int x, y;
+    char valorAntigo, valorNovo;
 } Movimento;
 
-typedef struct nodo {
+typedef struct Nodo {
     Movimento mov;
-    struct nodo *prox;
+    struct Nodo *prox;
 } Nodo;
 
 typedef struct {
     Nodo *topo;
 } StackMovimentos;
 
-/**
- * Inicializa a stack (ponteiro para NULL)
- */
-void initStack(StackMovimentos *stack);
+/* --- API esperada pelos testes --- */
+void inicializarStack(StackMovimentos *s);   /* novo alias */
+void destruirStack(StackMovimentos *s);      /* libertar toda a memória */
 
-/**
- * Empilha um movimento
- */
-void push(StackMovimentos *stack, Movimento mov);
+void initStack(StackMovimentos *s);          /* nome usado no main */
+void push(StackMovimentos *s, Movimento m);
+int  pop (StackMovimentos *s, Movimento *m);
 
-/**
- * Desempilha (retorna 1 se OK, 0 se stack vazia)
- */
-int pop(StackMovimentos *stack, Movimento *mov);
-
-#endif
+#endif /* STACK_H */

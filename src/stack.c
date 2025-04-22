@@ -1,28 +1,33 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "stack.h"
 
-void initStack(StackMovimentos *stack) {
-    stack->topo = NULL; 
+/* -------- inicialização -------- */
+void inicializarStack(StackMovimentos *s) { s->topo = NULL; }
+void initStack        (StackMovimentos *s) { inicializarStack(s); }
+
+/* -------- operações -------- */
+void push(StackMovimentos *s, Movimento m)
+{
+    Nodo *n = malloc(sizeof *n);
+    if (!n) return;
+    n->mov  = m;
+    n->prox = s->topo;
+    s->topo = n;
 }
 
-// Empilha um movimento 
-void push(StackMovimentos *stack, Movimento mov) {
-    Nodo *novo = malloc(sizeof(Nodo));
-    if (!novo) return; // Falha de alocação, caso raro
-    novo->mov = mov;
-    novo->prox = stack->topo;
-    stack->topo = novo;
-}
-
-// Desempilha 
-int pop(StackMovimentos *stack, Movimento *mov) {
-    if (!stack->topo) {
-        return 0; // stack vazia
-    }
-    Nodo *temp = stack->topo;
-    *mov = temp->mov;  
-    stack->topo = temp->prox;
-    free(temp);
+int pop(StackMovimentos *s, Movimento *m)
+{
+    if (!s->topo) return 0;
+    Nodo *n = s->topo;
+    *m      = n->mov;
+    s->topo = n->prox;
+    free(n);
     return 1;
+}
+
+/* -------- destruição -------- */
+void destruirStack(StackMovimentos *s)
+{
+    Movimento tmp;
+    while (pop(s, &tmp));    /* esvazia a lista e liberta nós */
 }
