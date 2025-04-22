@@ -112,7 +112,7 @@ void testInterfaceDesfazerStackVazia(void) {
     destruirStack(&stack);
 }
 
-int main() {
+int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         return CU_get_error();
 

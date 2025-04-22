@@ -102,11 +102,11 @@ int riscaQuadrado(char **tabuleiro, int linhas, int colunas, Coordenadas ponto) 
     }
     if (isupper(atual)) {
         // Segundo a regra do professor, não podemos riscar direto
-        printf("Erro: não se pode riscar uma casa pintada de branco (faça fundo primeiro!).\n");
+        printf("Erro: não se pode riscar uma casa pintada de branco (faça undo primeiro!).\n");
         return 0;
     }
     // riscar exige que todas as vizinhas ortogonais estejam em maiúscula?
-    // Se for regra, verificamos:
+    // Se for regra, faz se assim
     if (!vizinhosSaoBrancos(tabuleiro, linhas, colunas, ponto)) {
         printf("Erro: não pode riscar, pois alguma casa vizinha não está pintada de branco.\n");
         return 0;

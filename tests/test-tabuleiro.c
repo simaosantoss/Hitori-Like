@@ -61,38 +61,31 @@ void testPintaBrancoInvalido(void) {
     char **tab = criaTabuleiro(linhas, colunas);
     preencherTabuleiroTeste(tab, linhas, colunas);
 
-    Coordenadas c = {1, 0}; // 'c'
-    int res = pintaBranco(tab, linhas, colunas, c);
-    CU_ASSERT_EQUAL(res, 1);
+    /* pinta uma célula e tenta pintar de novo -> falha */
+    Coordenadas c = {1, 0};        // 'c'
+    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, c), 1);
     CU_ASSERT_EQUAL(tab[0][1], 'C');
+    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, c), 0);
 
-    // Tentativa de pintar novamente
-    res = pintaBranco(tab, linhas, colunas, c);
-    CU_ASSERT_EQUAL(res, 0);
-
-    // Riscando célula
-    Coordenadas c2 = {2, 2}; // 'd'
-    res = pintaBranco(tab, linhas, colunas, c2);
-    CU_ASSERT_EQUAL(res, 1);
-
+    /* prepara vizinhos brancos para poder riscar o centro */
+    Coordenadas centro = {2, 2};   // continua minúscula 'd'
     Coordenadas v1 = {2, 1}, v2 = {2, 3}, v3 = {1, 2}, v4 = {3, 2};
     pintaBranco(tab, linhas, colunas, v1);
     pintaBranco(tab, linhas, colunas, v2);
     pintaBranco(tab, linhas, colunas, v3);
     pintaBranco(tab, linhas, colunas, v4);
 
-    res = riscaQuadrado(tab, linhas, colunas, c2);
-    CU_ASSERT_EQUAL(res, 1);
-
-    // Tentar pintar uma célula riscada
-    res = pintaBranco(tab, linhas, colunas, c2);
-    CU_ASSERT_EQUAL(res, 0);
+    /* agora riscar deve resultar */
+    CU_ASSERT_EQUAL(riscaQuadrado(tab, linhas, colunas, centro), 1);
     CU_ASSERT_EQUAL(tab[2][2], '#');
 
-    for (int i = 0; i < linhas; i++)
-        free(tab[i]);
+    /* tentar pintar uma célula já riscada -> falha */
+    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, centro), 0);
+
+    for (int i = 0; i < linhas; i++) free(tab[i]);
     free(tab);
 }
+
 
 // Teste de riscar célula com vizinhos corretos
 void testRiscaQuadradoValido(void) {
