@@ -2,8 +2,8 @@
 #define TABULEIRO_H
 
 typedef struct coordenadas {
-    int x; // coluna
-    int y; // linha
+    int x; 
+    int y; 
 } Coordenadas;
 
 /**
@@ -12,7 +12,6 @@ typedef struct coordenadas {
 char **criaTabuleiro(int linhas, int colunas);
 
 /**
- * (Opcional) Lê o tabuleiro do stdin. 
  * - Não vamos usar muito isto pois o prof pediu para ler de ficheiro.
  */
 void recebeTabuleiro(char **tabuleiro, int linhas, int colunas);
