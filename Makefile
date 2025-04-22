@@ -25,8 +25,7 @@ jogo: $(OBJS_JOGO)
 src/main.o: src/main.c src/tabuleiro.h src/interface.h src/stack.h src/ficheiros.h
 	$(CC) $(CFLAGS) -c src/main.c -o src/main.o
 
-# Compila tabuleiro.c
-src/tabuleiro.o: src/tabuleiro.c src/tabuleiro.h
+# Compila tabuleiro.ciro.c src/tabuleiro.h
 	$(CC) $(CFLAGS) -c src/tabuleiro.c -o src/tabuleiro.o
 
 # Compila interface.c
