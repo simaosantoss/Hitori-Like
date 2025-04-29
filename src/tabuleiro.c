@@ -9,9 +9,7 @@
 /* adicionei estas caixas todas pipis para ser mais fácil para voces conseguirem perceber o que meti aqui e conseguir
 dividir o vosso pensamento por partes */
 
-/* ============================================================= */
 /*                    FUNÇÕES DE CRIAÇÃO                         */
-/* ============================================================= */
 
 char **criaTabuleiro(int linhas,int colunas)
 {
@@ -48,9 +46,7 @@ static int vizinhosSaoBrancos(char **tab,int l,int c,Coordenadas p)
     return 1;
 }
 
-/* ============================================================= */
-/*  ETAPAS 1-2: PINTAR / RISCAR / CONVERTER                        */
-/* ============================================================= */
+/*  ETAPAS 1-2: PINTAR / RISCAR / CONVERTER */
 
 int pintaBranco(char **tab,int l,int c,Coordenadas p)
 {
@@ -83,9 +79,7 @@ int converteParaMinuscula(char **tab,int l,int c,Coordenadas p)
     return 1;
 }
 
-/* ============================================================= */
-/*  ETAPA 3: CONECTIVIDADE DAS CASAS BRANCAS                      */
-/* ============================================================= */
+/*  ETAPA 3: CONECTIVIDADE DAS CASAS BRANCAS */
 
 /* BFS que devolve 1 se TODAS as casas maiúsculas do tabuleiro
    estão ligadas ortogonalmente entre si; caso contrário devolve 0 */
@@ -102,10 +96,10 @@ static int casasBrancasConectadas(char **t,int l,int c)
                 if (startX == -1){ startX = x; startY = y; }
             }
 
-    /* Se não há brancas, não existe violação de conectividade    */
+    /* Se não há brancas, não existe violação de conectividade  */
     if (totalBrancas == 0) return 1;
 
-    /* Estruturas auxiliares para a BFS */
+    /* auxiliares para a BFS */
     bool *visited = calloc(l * c, sizeof *visited);     
     int  *qx      = malloc(l * c * sizeof *qx);          
     int  *qy      = malloc(l * c * sizeof *qy);
@@ -128,9 +122,9 @@ static int casasBrancasConectadas(char **t,int l,int c)
         for (int k = 0; k < 4; ++k){
             int nx = x + dx[k], ny = y + dy[k];
             if (nx<0 || nx>=c || ny<0 || ny>=l) continue;
-            if (!isupper(t[ny][nx]))                continue;
+            if (!isupper(t[ny][nx])) continue;
             int idx = ny * c + nx;
-            if (visited[idx])                      continue;
+            if (visited[idx]) continue;
 
             visited[idx] = true;
             qx[tail] = nx; qy[tail] = ny; tail++;
@@ -141,9 +135,7 @@ static int casasBrancasConectadas(char **t,int l,int c)
     return visitadas == totalBrancas;
 }
 
-/* ============================================================= */
-/*  COMANDO v – VERIFICAÇÃO TOTAL                                */
-/* ============================================================= */
+/*  COMANDO v – VERIFICAÇÃO TOTAL */
 
 int verificaEstado(char **t,int l,int c)
 {
