@@ -3,9 +3,6 @@
 #include <ctype.h>
 #include "tabuleiro.h"
 
-/* ============================================================= */
-/* FUNÇÃO AUXILIAR – preenche tabuleiro 5×5 usado nos testes      */
-/* ============================================================= */
 static void preencherTabuleiroTeste(char **t, int l, int c) {
     char init[5][5] = {
         {'e','c','a','d','c'},
@@ -28,7 +25,7 @@ void testCriaTabuleiro(void) {
     free(tab);
 }
 
-/* ---------- Pintar ---------- */
+
 void testPintaBrancoValido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
@@ -46,11 +43,11 @@ void testPintaBrancoInvalido(void) {
 
     Coordenadas c1 = {1,0};
     CU_ASSERT_EQUAL(pintaBranco(tab, l, c, c1), 1);
-    CU_ASSERT_EQUAL(pintaBranco(tab, l, c, c1), 0);            /* repintar -> erro */
+    CU_ASSERT_EQUAL(pintaBranco(tab, l, c, c1), 0);           
     for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-/* ---------- Riscar ---------- */
+
 void testRiscaQuadradoValido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
@@ -68,11 +65,10 @@ void testRiscaQuadradoInvalido(void) {
     char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
 
     pintaBranco(tab, l, c, (Coordenadas){0,0});
-    CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){0,0}), 0); /* branca não pode riscar */
+    CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){0,0}), 0); 
     for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-/* ---------- Converter ---------- */
 void testConverteParaMinuscula(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
@@ -84,7 +80,6 @@ void testConverteParaMinuscula(void) {
     for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-/* ---------- Coordenadas inválidas ---------- */
 void testCoordenadaInvalida(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
@@ -94,9 +89,8 @@ void testCoordenadaInvalida(void) {
     for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-/* NOVOS TESTES – CONECTIVIDADE DAS CASAS BRANCAS (Etapa 3) */
 
-/* 2×2: A e B adjacentes → válido */
+
 void testConectividadeValida(void){
     int l=2,c=2; char **tab=criaTabuleiro(l,c);
     tab[0][0]='A'; tab[0][1]='B';
@@ -105,11 +99,11 @@ void testConectividadeValida(void){
     for(int i=0;i<l;++i) free(tab[i]); free(tab);
 }
 
-/* 3×3: A (0,0) e B (2,2) separados → inválido */
+
 void testConectividadeInvalida(void) {
     int l = 3, c = 3;
     char **tab = criaTabuleiro(l, c);
-    /* inicializa tudo com 'c' minúsculo */
+
     for (int y = 0; y < l; ++y)
         for (int x = 0; x < c; ++x)
             tab[y][x] = 'c';
@@ -119,7 +113,6 @@ void testConectividadeInvalida(void) {
     for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-/* SUITE */
 
 int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS) return CU_get_error();
@@ -127,7 +120,7 @@ int main(void) {
     CU_pSuite s = CU_add_suite("Suite_Tabuleiro", 0, 0);
     if (!s) { CU_cleanup_registry(); return CU_get_error(); }
 
-    /* Testes anteriores */
+
     CU_add_test(s, "Criação do Tabuleiro",           testCriaTabuleiro);
     CU_add_test(s, "Pintura Válida",                 testPintaBrancoValido);
     CU_add_test(s, "Pintura Inválida",               testPintaBrancoInvalido);
@@ -136,7 +129,6 @@ int main(void) {
     CU_add_test(s, "Conversão para Minúscula",       testConverteParaMinuscula);
     CU_add_test(s, "Coordenadas Inválidas",          testCoordenadaInvalida);
 
-    /* Novos testes de conectividade */
     CU_add_test(s, "Conectividade Válida",           testConectividadeValida);
     CU_add_test(s, "Conectividade Inválida",         testConectividadeInvalida);
 
