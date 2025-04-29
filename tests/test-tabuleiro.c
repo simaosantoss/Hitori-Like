@@ -34,7 +34,8 @@ void testPintaBrancoValido(void) {
     CU_ASSERT_EQUAL(tab[0][0], 'E');
     CU_ASSERT_EQUAL(pintaBranco(tab, l, c, (Coordenadas){3,1}), 1);
     CU_ASSERT_EQUAL(tab[1][3], 'E');
-    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); 
+    free(tab);
 }
 
 void testPintaBrancoInvalido(void) {
@@ -44,7 +45,8 @@ void testPintaBrancoInvalido(void) {
     Coordenadas c1 = {1,0};
     CU_ASSERT_EQUAL(pintaBranco(tab, l, c, c1), 1);
     CU_ASSERT_EQUAL(pintaBranco(tab, l, c, c1), 0);           
-    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); 
+    free(tab);
 }
 
 
@@ -57,7 +59,8 @@ void testRiscaQuadradoValido(void) {
 
     CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){2,2}), 1);
     CU_ASSERT_EQUAL(tab[2][2], '#');
-    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); 
+    free(tab);
 }
 
 void testRiscaQuadradoInvalido(void) {
@@ -66,7 +69,8 @@ void testRiscaQuadradoInvalido(void) {
 
     pintaBranco(tab, l, c, (Coordenadas){0,0});
     CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){0,0}), 0); 
-    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); 
+    free(tab);
 }
 
 void testConverteParaMinuscula(void) {
@@ -77,7 +81,8 @@ void testConverteParaMinuscula(void) {
     pintaBranco(tab, l, c, p);
     CU_ASSERT_EQUAL(converteParaMinuscula(tab, l, c, p), 1);
     CU_ASSERT_TRUE(islower(tab[0][1]));
-    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); 
+    free(tab);
 }
 
 void testCoordenadaInvalida(void) {
@@ -86,7 +91,8 @@ void testCoordenadaInvalida(void) {
 
     CU_ASSERT_EQUAL(pintaBranco(tab, l, c, (Coordenadas){-1,0}), 0);
     CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){5,5}), 0);
-    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); 
+    free(tab);
 }
 
 
@@ -96,7 +102,8 @@ void testConectividadeValida(void){
     tab[0][0]='A'; tab[0][1]='B';
     tab[1][0]='c'; tab[1][1]='d';
     CU_ASSERT_EQUAL(verificaEstado(tab,l,c),1);
-    for(int i=0;i<l;++i) free(tab[i]); free(tab);
+    for(int i=0;i<l;++i) free(tab[i]); 
+    free(tab);
 }
 
 
@@ -110,7 +117,8 @@ void testConectividadeInvalida(void) {
     tab[0][0] = 'A';
     tab[2][2] = 'B';
     CU_ASSERT_EQUAL(verificaEstado(tab, l, c), 0);
-    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); 
+    free(tab);
 }
 
 
