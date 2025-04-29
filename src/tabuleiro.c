@@ -13,22 +13,22 @@ dividir o vosso pensamento por partes */
 
 char **criaTabuleiro(int linhas,int colunas)
 {
-    char **t = malloc(linhas * sizeof *t);
-    for (int i=0;i<linhas;++i) t[i] = malloc(colunas * sizeof **t);
-    return t;
+    char **tabuleiro = malloc(linhas * sizeof *tabuleiro);
+    for (int i=0;i<linhas;++i) tabuleiro[i] = malloc(colunas * sizeof **tabuleiro);
+    return tabuleiro;
 }
 
-void recebeTabuleiro(char **t,int l,int c)
+void recebeTabuleiro(char **tabuleiro,int linhas,int colunas)
 {
-    for (int y=0;y<l;++y)
-        for (int x=0;x<c;++x)
-            scanf(" %c",&t[y][x]);
+    for (int y=0;y<linhas;++y)
+        for (int x=0;x<colunas;++x)
+            scanf(" %c",&tabuleiro[y][x]);
 }
 
-void imprimeTabuleiro(char **t,int l,int c)
+void imprimeTabuleiro(char **tabuleiro,int linhas,int colunas)
 {
-    for (int y=0;y<l;++y){
-        for (int x=0;x<c;++x) printf("%c ",t[y][x]);
+    for (int y=0;y<linhas;++y){
+        for (int x=0;x<colunas;++x) printf("%c ",tabuleiro[y][x]);
         puts("");
     }
 }
@@ -37,143 +37,140 @@ void imprimeTabuleiro(char **t,int l,int c)
 
 /* devolve 1 se todos os 4 vizinhos ortogonais (quando existem)
    forem maiúsculas; caso contrário devolve 0 */
-static int vizinhosSaoBrancos(char **tab,int l,int c,Coordenadas p)
+static int vizinhosSaoBrancos(char **tabuleiro,int linhas,int colunas,Coordenadas p)
 {
-    if (p.y-1>=0 && !isupper(tab[p.y-1][p.x])) return 0;
-    if (p.y+1< l && !isupper(tab[p.y+1][p.x])) return 0;
-    if (p.x-1>=0 && !isupper(tab[p.y][p.x-1])) return 0;
-    if (p.x+1< c && !isupper(tab[p.y][p.x+1])) return 0;
+    if (p.y-1>=0 && !isupper(tabuleiro[p.y-1][p.x])) return 0;
+    if (p.y+1< linhas && !isupper(tabuleiro[p.y+1][p.x])) return 0;
+    if (p.x-1>=0 && !isupper(tabuleiro[p.y][p.x-1])) return 0;
+    if (p.x+1< colunas && !isupper(tabuleiro[p.y][p.x+1])) return 0;
     return 1;
 }
 
 
-int pintaBranco(char **tab,int l,int c,Coordenadas p)
+int pintaBranco(char **tabuleiro,int linhas,int colunas,Coordenadas p)
 {
-    if (p.x<0||p.x>=c||p.y<0||p.y>=l){ printf("Coordenada fora do tabuleiro.\n");return 0;}
-    char ch = tab[p.y][p.x];
-    if (isupper(ch))   { puts("Erro: já está pintado de branco.");  return 0; }
-    if (ch=='#')       { puts("Erro: não se pode pintar uma casa riscada."); return 0; }
+    if (p.x<0||p.x>=colunas||p.y<0||p.y>=linhas){ printf("Coordenada fora do tabuleiro.\n");return 0;}
+    char letra = tabuleiro[p.y][p.x];
+    if (isupper(letra))   { puts("Erro: já está pintado de branco.");  return 0; }
+    if (letra=='#')       { puts("Erro: não se pode pintar uma casa riscada."); return 0; }
 
-    tab[p.y][p.x] = toupper(ch);
+    tabuleiro[p.y][p.x] = toupper(letra);
     return 1;
 }
 
-int riscaQuadrado(char **tab,int l,int c,Coordenadas p)
+int riscaQuadrado(char **tabuleiro,int linhas,int colunas,Coordenadas p)
 {
-    if (p.x<0||p.x>=c||p.y<0||p.y>=l){ printf("Coordenada fora do tabuleiro.\n");return 0;}
-    char ch = tab[p.y][p.x];
-    if (ch=='#')      { puts("Erro: já está riscado."); return 0; }
-    if (isupper(ch)){ puts("Erro: não se pode riscar uma casa pintada de branco (faça undo primeiro!).");return 0;}
+    if (p.x<0||p.x>=colunas||p.y<0||p.y>=linhas){ printf("Coordenada fora do tabuleiro.\n");return 0;}
+    char letra = tabuleiro[p.y][p.x];
+    if (letra=='#')      { puts("Erro: já está riscado."); return 0; }
+    if (isupper(letra)){ puts("Erro: não se pode riscar uma casa pintada de branco (faça undo primeiro!).");return 0;}
 
-    tab[p.y][p.x] = '#';
+    tabuleiro[p.y][p.x] = '#';
     return 1;
 }
 
-int converteParaMinuscula(char **tab,int l,int c,Coordenadas p)
+int converteParaMinuscula(char **tabuleiro,int linhas,int colunas,Coordenadas p)
 {
-    if (p.x<0||p.x>=c||p.y<0||p.y>=l){ printf("Coordenada fora do tabuleiro.\n");return 0;}
-    if (!isupper(tab[p.y][p.x])){ puts("Erro: a casa não está em maiúscula, não faz sentido converter."); return 0; }
+    if (p.x<0||p.x>=colunas||p.y<0||p.y>=linhas){ printf("Coordenada fora do tabuleiro.\n");return 0;}
+    if (!isupper(tabuleiro[p.y][p.x])){ puts("Erro: a casa não está em maiúscula, não faz sentido converter."); return 0; }
 
-    tab[p.y][p.x] = tolower(tab[p.y][p.x]);
+    tabuleiro[p.y][p.x] = tolower(tabuleiro[p.y][p.x]);
     return 1;
 }
 
 // Conectividade das casas brancas (v)
 
-static int casasBrancasConectadas(char **t,int l,int c)
+static int casasBrancasConectadas(char **tabuleiro,int linhas,int colunas)
 {
     int totalBrancas = 0;
-    int startX = -1, startY = -1;
+    int inicioX = -1, inicioY = -1;
 
-    // Conta brancas e encontra ponto de partida 
-    for (int y = 0; y < l; ++y)
-        for (int x = 0; x < c; ++x)
-            if (isupper(t[y][x])){
+    for (int y = 0; y < linhas; ++y)
+        for (int x = 0; x < colunas; ++x)
+            if (isupper(tabuleiro[y][x])){
                 totalBrancas++;
-                if (startX == -1){ startX = x; startY = y; }
+                if (inicioX == -1){ inicioX = x; inicioY = y; }
             }
 
-    // Se não há brancas, não existe violação de conectividade  
     if (totalBrancas == 0) return 1;
 
-    bool *visited = calloc(l * c, sizeof *visited);     
-    int  *qx      = malloc(l * c * sizeof *qx);          
-    int  *qy      = malloc(l * c * sizeof *qy);
-    int head = 0, tail = 0;
+    bool *visitado = calloc(linhas * colunas, sizeof *visitado);     
+    int  *filaX    = malloc(linhas * colunas * sizeof *filaX);          
+    int  *filaY    = malloc(linhas * colunas * sizeof *filaY);
+    int cabeca = 0, cauda = 0;
 
-    qx[tail] = startX; qy[tail] = startY; tail++;
-    visited[startY * c + startX] = true;
+    filaX[cauda] = inicioX; filaY[cauda] = inicioY; cauda++;
+    visitado[inicioY * colunas + inicioX] = true;
 
-    int visitadas = 0;
-    const int dx[4] = {1,-1,0,0};
-    const int dy[4] = {0,0,1,-1};
+    int brancasVisitadas = 0;
+    const int deslocX[4] = {1,-1,0,0};
+    const int deslocY[4] = {0,0,1,-1};
 
-    while (head < tail){
-        int x = qx[head];
-        int y = qy[head];
-        head++;
-        visitadas++;
+    while (cabeca < cauda){
+        int x = filaX[cabeca];
+        int y = filaY[cabeca];
+        cabeca++;
+        brancasVisitadas++;
 
-        // explora vizinhos ortogonais 
-        for (int k = 0; k < 4; ++k){
-            int nx = x + dx[k], ny = y + dy[k];
-            if (nx<0 || nx>=c || ny<0 || ny>=l) continue;
-            if (!isupper(t[ny][nx])) continue;
-            int idx = ny * c + nx;
-            if (visited[idx]) continue;
+        for (int i = 0; i < 4; ++i){
+            int novoX = x + deslocX[i], novoY = y + deslocY[i];
+            if (novoX<0 || novoX>=colunas || novoY<0 || novoY>=linhas) continue;
+            if (!isupper(tabuleiro[novoY][novoX])) continue;
+            int idx = novoY * colunas + novoX;
+            if (visitado[idx]) continue;
 
-            visited[idx] = true;
-            qx[tail] = nx; qy[tail] = ny; tail++;
+            visitado[idx] = true;
+            filaX[cauda] = novoX; filaY[cauda] = novoY; cauda++;
         }
     }
 
-    free(qx); free(qy); free(visited);
-    return visitadas == totalBrancas;
+    free(filaX); free(filaY); free(visitado);
+    return brancasVisitadas == totalBrancas;
 }
 
-int verificaEstado(char **t,int l,int c)
+int verificaEstado(char **tabuleiro,int linhas,int colunas)
 {
-    int duplicados=0, hashErr=0, minusculasErr=0;
+    int haDuplicados=0, haErrosHash=0, haErrosMinusculas=0;
 
-    int rowU[l][26]; int colU[c][26];
-    memset(rowU,0,sizeof rowU);
-    memset(colU,0,sizeof colU);
+    int letrasLinha[linhas][26]; 
+    int letrasColuna[colunas][26];
+    memset(letrasLinha,0,sizeof letrasLinha);
+    memset(letrasColuna,0,sizeof letrasColuna);
 
-    // Contagem de maiúsculas por linha e coluna 
-    for (int y=0;y<l;++y)
-        for (int x=0;x<c;++x)
-            if (isupper(t[y][x])){
-                int id=t[y][x]-'A';
-                rowU[y][id]++; colU[x][id]++;
+    for (int y=0;y<linhas;++y)
+        for (int x=0;x<colunas;++x)
+            if (isupper(tabuleiro[y][x])){
+                int id=tabuleiro[y][x]-'A';
+                letrasLinha[y][id]++; 
+                letrasColuna[x][id]++;
             }
 
-
-    for (int y=0;y<l;++y)
-        for (int x=0;x<c;++x){
-            char ch=t[y][x];
-            if (isupper(ch) && (rowU[y][ch-'A']>1 || colU[x][ch-'A']>1))
-                duplicados = 1;
-            else if (ch=='#' && !vizinhosSaoBrancos(t,l,c,(Coordenadas){x,y}))
-                hashErr = 1;
-            else if (islower(ch) && (rowU[y][ch-'a'] || colU[x][ch-'a']))
-                minusculasErr = 1;
+    for (int y=0;y<linhas;++y)
+        for (int x=0;x<colunas;++x){
+            char ch=tabuleiro[y][x];
+            if (isupper(ch) && (letrasLinha[y][ch-'A']>1 || letrasColuna[x][ch-'A']>1))
+                haDuplicados = 1;
+            else if (ch=='#' && !vizinhosSaoBrancos(tabuleiro,linhas,colunas,(Coordenadas){x,y}))
+                haErrosHash = 1;
+            else if (islower(ch) && (letrasLinha[y][ch-'a'] || letrasColuna[x][ch-'a']))
+                haErrosMinusculas = 1;
         }
 
-    int conexaoErr = !casasBrancasConectadas(t,l,c);
+    int haErroConexao = !casasBrancasConectadas(tabuleiro,linhas,colunas);
 
-    if(!duplicados && !hashErr && !minusculasErr && !conexaoErr){
+    if(!haDuplicados && !haErrosHash && !haErrosMinusculas && !haErroConexao){
         puts("Estado válido - nenhuma restrição violada.");
         return 1;
     }
 
     puts("Jogo inválido:");
-    if (duplicados)
+    if (haDuplicados)
         puts("- Há letras brancas repetidas na mesma linha/coluna");
-    if (hashErr)
+    if (haErrosHash)
         puts("- Existem casas '#' com vizinhos que não estão brancos");
-    if (minusculasErr)
+    if (haErrosMinusculas)
         puts("- Há letras minúsculas que deviam estar riscadas (#)");
-    if (conexaoErr)
+    if (haErroConexao)
         puts("- Nem todas as casas brancas estão conectadas entre si");
 
     return 0;
