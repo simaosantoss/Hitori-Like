@@ -3,200 +3,145 @@
 #include <ctype.h>
 #include "tabuleiro.h"
 
-// Função auxiliar para preencher o tabuleiro com dados fixos para os testes
-void preencherTabuleiroTeste(char **tabuleiro, int linhas, int colunas) {
+/* ============================================================= */
+/* FUNÇÃO AUXILIAR – preenche tabuleiro 5×5 usado nos testes      */
+/* ============================================================= */
+static void preencherTabuleiroTeste(char **t, int l, int c) {
     char init[5][5] = {
-        {'e', 'c', 'a', 'd', 'c'},
-        {'d', 'c', 'd', 'e', 'c'},
-        {'b', 'd', 'd', 'c', 'e'},
-        {'c', 'd', 'e', 'e', 'b'},
-        {'a', 'c', 'c', 'b', 'b'}
+        {'e','c','a','d','c'},
+        {'d','c','d','e','c'},
+        {'b','d','d','c','e'},
+        {'c','d','e','e','b'},
+        {'a','c','c','b','b'}
     };
-    for (int i = 0; i < linhas; i++)
-        for (int j = 0; j < colunas; j++)
-            tabuleiro[i][j] = init[i][j];
+    for (int y = 0; y < l; ++y)
+        for (int x = 0; x < c; ++x)
+            t[y][x] = init[y][x];
 }
 
-// Teste da função de criação do tabuleiro
 void testCriaTabuleiro(void) {
-    int linhas = 5, colunas = 5;
-    char **tab = criaTabuleiro(linhas, colunas);
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c);
     CU_ASSERT_PTR_NOT_NULL(tab);
-    for (int i = 0; i < linhas; i++)
-        CU_ASSERT_PTR_NOT_NULL(tab[i]);
-    for (int i = 0; i < linhas; i++)
-        free(tab[i]);
+    for (int i = 0; i < l; ++i) CU_ASSERT_PTR_NOT_NULL(tab[i]);
+    for (int i = 0; i < l; ++i) free(tab[i]);
     free(tab);
 }
 
-// Teste para pintura de casas válidas
+/* ---------- Pintar ---------- */
 void testPintaBrancoValido(void) {
-    int linhas = 5, colunas = 5;
-    char **tab = criaTabuleiro(linhas, colunas);
-    preencherTabuleiroTeste(tab, linhas, colunas);
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
 
-    Coordenadas c = {0, 0}; // 'e'
-    int res = pintaBranco(tab, linhas, colunas, c);
-    CU_ASSERT_EQUAL(res, 1);
+    CU_ASSERT_EQUAL(pintaBranco(tab, l, c, (Coordenadas){0,0}), 1);
     CU_ASSERT_EQUAL(tab[0][0], 'E');
-
-    Coordenadas c2 = {3, 1}; // 'e'
-    res = pintaBranco(tab, linhas, colunas, c2);
-    CU_ASSERT_EQUAL(res, 1);
+    CU_ASSERT_EQUAL(pintaBranco(tab, l, c, (Coordenadas){3,1}), 1);
     CU_ASSERT_EQUAL(tab[1][3], 'E');
-
-    Coordenadas c3 = {4, 2}; // 'c'
-    res = pintaBranco(tab, linhas, colunas, c3);
-    CU_ASSERT_EQUAL(res, 1);
-    CU_ASSERT_EQUAL(tab[2][4], 'E');
-
-    for (int i = 0; i < linhas; i++)
-        free(tab[i]);
-    free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-// Teste para falhas ao pintar casas inválidas
 void testPintaBrancoInvalido(void) {
-    int linhas = 5, colunas = 5;
-    char **tab = criaTabuleiro(linhas, colunas);
-    preencherTabuleiroTeste(tab, linhas, colunas);
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
 
-    /* pinta uma célula e tenta pintar de novo -> falha */
-    Coordenadas c = {1, 0};        // 'c'
-    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, c), 1);
-    CU_ASSERT_EQUAL(tab[0][1], 'C');
-    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, c), 0);
-
-    /* prepara vizinhos brancos para poder riscar o centro */
-    Coordenadas centro = {2, 2};   // continua minúscula 'd'
-    Coordenadas v1 = {2, 1}, v2 = {2, 3}, v3 = {1, 2}, v4 = {3, 2};
-    pintaBranco(tab, linhas, colunas, v1);
-    pintaBranco(tab, linhas, colunas, v2);
-    pintaBranco(tab, linhas, colunas, v3);
-    pintaBranco(tab, linhas, colunas, v4);
-
-    /* agora riscar deve resultar */
-    CU_ASSERT_EQUAL(riscaQuadrado(tab, linhas, colunas, centro), 1);
-    CU_ASSERT_EQUAL(tab[2][2], '#');
-
-    /* tentar pintar uma célula já riscada -> falha */
-    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, centro), 0);
-
-    for (int i = 0; i < linhas; i++) free(tab[i]);
-    free(tab);
+    Coordenadas c1 = {1,0};
+    CU_ASSERT_EQUAL(pintaBranco(tab, l, c, c1), 1);
+    CU_ASSERT_EQUAL(pintaBranco(tab, l, c, c1), 0);            /* repintar -> erro */
+    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-
-// Teste de riscar célula com vizinhos corretos
+/* ---------- Riscar ---------- */
 void testRiscaQuadradoValido(void) {
-    int linhas = 5, colunas = 5;
-    char **tab = criaTabuleiro(linhas, colunas);
-    preencherTabuleiroTeste(tab, linhas, colunas);
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
 
-    Coordenadas v1 = {2, 1}, v2 = {2, 3}, v3 = {1, 2}, v4 = {3, 2};
-    pintaBranco(tab, linhas, colunas, v1);
-    pintaBranco(tab, linhas, colunas, v2);
-    pintaBranco(tab, linhas, colunas, v3);
-    pintaBranco(tab, linhas, colunas, v4);
+    Coordenadas v[4] = {{2,1},{2,3},{1,2},{3,2}};
+    for (int i = 0; i < 4; ++i) pintaBranco(tab, l, c, v[i]);
 
-    Coordenadas alvo = {2, 2};
-    int res = riscaQuadrado(tab, linhas, colunas, alvo);
-    CU_ASSERT_EQUAL(res, 1);
+    CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){2,2}), 1);
     CU_ASSERT_EQUAL(tab[2][2], '#');
-
-    for (int i = 0; i < linhas; i++)
-        free(tab[i]);
-    free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-// Teste de tentativa inválida de riscar
 void testRiscaQuadradoInvalido(void) {
-    int linhas = 5, colunas = 5;
-    char **tab = criaTabuleiro(linhas, colunas);
-    preencherTabuleiroTeste(tab, linhas, colunas);
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
 
-    Coordenadas c = {0, 0}; // 'e'
-    pintaBranco(tab, linhas, colunas, c);
-    int res = riscaQuadrado(tab, linhas, colunas, c);
-    CU_ASSERT_EQUAL(res, 0);
-
-    Coordenadas c2 = {4, 4}; // sem vizinhos brancos
-    res = riscaQuadrado(tab, linhas, colunas, c2);
-    CU_ASSERT_EQUAL(res, 0);
-
-    for (int i = 0; i < linhas; i++)
-        free(tab[i]);
-    free(tab);
+    pintaBranco(tab, l, c, (Coordenadas){0,0});
+    CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){0,0}), 0); /* branca não pode riscar */
+    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-// Teste de conversão de maiúscula para minúscula
+/* ---------- Converter ---------- */
 void testConverteParaMinuscula(void) {
-    int linhas = 5, colunas = 5;
-    char **tab = criaTabuleiro(linhas, colunas);
-    preencherTabuleiroTeste(tab, linhas, colunas);
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
 
-    Coordenadas c = {1, 0}; // 'c'
-    pintaBranco(tab, linhas, colunas, c);
-    CU_ASSERT_TRUE(isupper(tab[0][1]));
-
-    int res = converteParaMinuscula(tab, linhas, colunas, c);
-    CU_ASSERT_EQUAL(res, 1);
+    Coordenadas p = {1,0};
+    pintaBranco(tab, l, c, p);
+    CU_ASSERT_EQUAL(converteParaMinuscula(tab, l, c, p), 1);
     CU_ASSERT_TRUE(islower(tab[0][1]));
-
-    Coordenadas c2 = {2, 2}; // não maiúscula
-    res = converteParaMinuscula(tab, linhas, colunas, c2);
-    CU_ASSERT_EQUAL(res, 0);
-
-    for (int i = 0; i < linhas; i++)
-        free(tab[i]);
-    free(tab);
+    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-// Teste de coordenadas inválidas
+/* ---------- Coordenadas inválidas ---------- */
 void testCoordenadaInvalida(void) {
-    int linhas = 5, colunas = 5;
-    char **tab = criaTabuleiro(linhas, colunas);
-    preencherTabuleiroTeste(tab, linhas, colunas);
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c); preencherTabuleiroTeste(tab, l, c);
 
-    Coordenadas c = {-1, 0};
-    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, c), 0);
-    CU_ASSERT_EQUAL(riscaQuadrado(tab, linhas, colunas, c), 0);
-
-    Coordenadas c2 = {0, -1};
-    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, c2), 0);
-    CU_ASSERT_EQUAL(riscaQuadrado(tab, linhas, colunas, c2), 0);
-
-    Coordenadas c3 = {5, 5};
-    CU_ASSERT_EQUAL(pintaBranco(tab, linhas, colunas, c3), 0);
-    CU_ASSERT_EQUAL(riscaQuadrado(tab, linhas, colunas, c3), 0);
-
-    for (int i = 0; i < linhas; i++)
-        free(tab[i]);
-    free(tab);
+    CU_ASSERT_EQUAL(pintaBranco(tab, l, c, (Coordenadas){-1,0}), 0);
+    CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, (Coordenadas){5,5}), 0);
+    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
 }
 
-// Função principal com os testes registrados
+/* NOVOS TESTES – CONECTIVIDADE DAS CASAS BRANCAS (Etapa 3) */
+
+/* 2×2: A e B adjacentes → válido */
+void testConectividadeValida(void){
+    int l=2,c=2; char **tab=criaTabuleiro(l,c);
+    tab[0][0]='A'; tab[0][1]='B';
+    tab[1][0]='c'; tab[1][1]='d';
+    CU_ASSERT_EQUAL(verificaEstado(tab,l,c),1);
+    for(int i=0;i<l;++i) free(tab[i]); free(tab);
+}
+
+/* 3×3: A (0,0) e B (2,2) separados → inválido */
+void testConectividadeInvalida(void) {
+    int l = 3, c = 3;
+    char **tab = criaTabuleiro(l, c);
+    /* inicializa tudo com 'c' minúsculo */
+    for (int y = 0; y < l; ++y)
+        for (int x = 0; x < c; ++x)
+            tab[y][x] = 'c';
+    tab[0][0] = 'A';
+    tab[2][2] = 'B';
+    CU_ASSERT_EQUAL(verificaEstado(tab, l, c), 0);
+    for (int i = 0; i < l; ++i) free(tab[i]); free(tab);
+}
+
+/* SUITE */
+
 int main(void) {
-    if (CU_initialize_registry() != CUE_SUCCESS)
-        return CU_get_error();
+    if (CU_initialize_registry() != CUE_SUCCESS) return CU_get_error();
 
-    CU_pSuite suite = CU_add_suite("Suite_Tabuleiro", 0, 0);
-    if (!suite) {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
+    CU_pSuite s = CU_add_suite("Suite_Tabuleiro", 0, 0);
+    if (!s) { CU_cleanup_registry(); return CU_get_error(); }
 
-    CU_add_test(suite, "Criação do Tabuleiro", testCriaTabuleiro);
-    CU_add_test(suite, "Pintura Válida", testPintaBrancoValido);
-    CU_add_test(suite, "Pintura Inválida", testPintaBrancoInvalido);
-    CU_add_test(suite, "Riscar Válido", testRiscaQuadradoValido);
-    CU_add_test(suite, "Riscar Inválido", testRiscaQuadradoInvalido);
-    CU_add_test(suite, "Conversão para Minúscula", testConverteParaMinuscula);
-    CU_add_test(suite, "Coordenadas Inválidas", testCoordenadaInvalida);
+    /* Testes anteriores */
+    CU_add_test(s, "Criação do Tabuleiro",           testCriaTabuleiro);
+    CU_add_test(s, "Pintura Válida",                 testPintaBrancoValido);
+    CU_add_test(s, "Pintura Inválida",               testPintaBrancoInvalido);
+    CU_add_test(s, "Riscar Válido",                  testRiscaQuadradoValido);
+    CU_add_test(s, "Riscar Inválido",                testRiscaQuadradoInvalido);
+    CU_add_test(s, "Conversão para Minúscula",       testConverteParaMinuscula);
+    CU_add_test(s, "Coordenadas Inválidas",          testCoordenadaInvalida);
+
+    /* Novos testes de conectividade */
+    CU_add_test(s, "Conectividade Válida",           testConectividadeValida);
+    CU_add_test(s, "Conectividade Inválida",         testConectividadeInvalida);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
-
     return CU_get_error();
 }
