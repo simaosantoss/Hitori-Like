@@ -167,7 +167,6 @@ int verificaEstado(char **t,int l,int c)
 
     /* ------------- NOVO: etapa 3 ------------- */
     int conexaoErr = !casasBrancasConectadas(t,l,c);
-    /* ------------------------------------------ */
 
     if(!duplicados && !hashErr && !minusculasErr && !conexaoErr){
         puts("Estado válido - nenhuma restrição violada.");
