@@ -14,7 +14,7 @@ void test_stack_push_pop(void) {
     Movimento popMov;
     int res = pop(&stack, &popMov);
     CU_ASSERT_EQUAL(res, 1);
-    /* Deve ser LIFO, ou seja, o último empilhado (mov2) é desempilhado primeiro */
+
     CU_ASSERT_EQUAL(popMov.x, mov2.x);
     CU_ASSERT_EQUAL(popMov.y, mov2.y);
     CU_ASSERT_EQUAL(popMov.valorAntigo, mov2.valorAntigo);
@@ -27,7 +27,6 @@ void test_stack_push_pop(void) {
     CU_ASSERT_EQUAL(popMov.valorAntigo, mov1.valorAntigo);
     CU_ASSERT_EQUAL(popMov.valorNovo, mov1.valorNovo);
 
-    /* Agora a stack deve estar vazia */
     res = pop(&stack, &popMov);
     CU_ASSERT_EQUAL(res, 0);
 }

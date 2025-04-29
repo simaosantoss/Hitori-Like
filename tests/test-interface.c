@@ -5,7 +5,7 @@
 #include "tabuleiro.h"
 #include "stack.h"
 
-/* ---------- auxiliar ---------- */
+
 static void preencher(char **t,int l,int c){
     char init[5][5]={ {'e','c','a','d','c'},
                       {'d','c','d','e','c'},
@@ -15,7 +15,6 @@ static void preencher(char **t,int l,int c){
     for(int y=0;y<l;++y) for(int x=0;x<c;++x) t[y][x]=init[y][x];
 }
 
-/* ---------- testes ---------- */
 void testPintaValida(void){
     int l=5,c=5; char **tab=criaTabuleiro(l,c); preencher(tab,l,c);
     StackMovimentos st; initStack(&st);
@@ -35,14 +34,13 @@ void testPintaInvalidaCoord(void){
     libertaMemoria(tab,l); destruirStack(&st);
 }
 
-/* --------- AGORA DEVE RISCAR (regra correcta) --------- */
 void testRiscaSemVizinhosBrancosPermitido(void){
     int l=5,c=5; char **tab=criaTabuleiro(l,c); preencher(tab,l,c);
     StackMovimentos st; initStack(&st);
 
-    Coordenadas p={2,2};            /* minúscula 'd' com vizinhos minúsculos */
+    Coordenadas p={2,2};           
     CU_ASSERT_EQUAL(riscaQuadrado(tab,l,c,p),1);
-    CU_ASSERT_EQUAL(tab[2][2],'#'); /* foi riscado */
+    CU_ASSERT_EQUAL(tab[2][2],'#'); 
 
     libertaMemoria(tab,l); destruirStack(&st);
 }
