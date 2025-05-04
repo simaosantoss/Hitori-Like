@@ -1,139 +1,117 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tabuleiro.h" 
+#include "tabuleiro.h"
 #include "interface.h"
 #include "ficheiros.h"
 #include "stack.h"
 
-void lerComando(char ***ptabuleiro, int *linhas, int *colunas, StackMovimentos *stack) {
-    // ptabuleiro é um ponteiro para o 'char**' real, pois podemos ter de realocar se ler de ficheiro
-    char comando[64];
-    char letra;
-    int numero;
+/* ---------- NOVO: registar alterações em bloco ---------- */
+static void registaMudancas(StackMovimentos *st,
+                            char **antes,char **depois,int l,int c)
+{
+    for (int y = 0; y < l; ++y)
+        for (int x = 0; x < c; ++x)
+            if (antes[y][x] != depois[y][x])
+                push(st, (Movimento){x, y, antes[y][x], depois[y][x]});
+}
 
-    while (1) {
-        imprimeTabuleiro(*ptabuleiro, *linhas, *colunas);
-        printf("Digite um comando (b <coord>, r <coord>, f <coord>, v, l <fic>, g <fic>, d, s):\n");
-        if (scanf(" %s", comando) != 1) {
-            continue;
-        }
-             else if (strcmp(comando, "s") == 0) {
-         printf("A sair do programa...\n");
-         break;              /* main() libertará o tabuleiro uma única vez */
-     }
-        else if (strcmp(comando, "b") == 0) {
-            // pintar de branco
-            if (scanf(" %c%d", &letra, &numero) != 2) {
-                printf("Erro: coordenada inválida!\n");
-                continue;
-            }
-            Coordenadas c = { letra - 'a', numero - 1 };
 
-            // Validação das coordenadas
-            if (c.x < 0 || c.x >= *colunas || c.y < 0 || c.y >= *linhas) {
-                printf("Erro: coordenada fora dos limites!\n");
-                continue;
-            }
+void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
+{
+    char cmd[64], letra; int num;
 
-            char valorAntigo = (*ptabuleiro)[c.y][c.x];
-            if (pintaBranco(*ptabuleiro, *linhas, *colunas, c)) {
-                // Se deu certo, empilha
-                Movimento mov;
-                mov.x = c.x; mov.y = c.y;
-                mov.valorAntigo = valorAntigo;
-                mov.valorNovo = (*ptabuleiro)[c.y][c.x];
-                push(stack, mov);
-            }
-        }
-        else if (strcmp(comando, "r") == 0) {
-            // riscar
-            if (scanf(" %c%d", &letra, &numero) != 2) {
-             printf("Erro: coordenada inválida!\n");
-              continue;
-            }
-            Coordenadas c = { letra - 'a', numero - 1 };
+    while(1){
+        imprimeTabuleiro(*ptab,*l,*c);
+        puts("Comandos: b/r/f <coord>, a, A, R, v, d, g/l <fic>, s");
+        if(scanf(" %s",cmd)!=1) continue;
 
-            // Validação das coordenadas
-            if (c.x < 0 || c.x >= *colunas || c.y < 0 || c.y >= *linhas) {
-                printf("Erro: coordenada fora dos limites!\n");
-                continue;
-         }
+        /* ---------- sair ---------- */
+        if(strcmp(cmd,"s")==0){ puts("Até breve!"); break; }
 
-        char valorAntigo = (*ptabuleiro)[c.y][c.x];
-        if (riscaQuadrado(*ptabuleiro, *linhas, *colunas, c)) {
-            // Se deu certo, empilha
-            Movimento mov;
-            mov.x = c.x; mov.y = c.y;
-            mov.valorAntigo = valorAntigo;
-            mov.valorNovo = (*ptabuleiro)[c.y][c.x];
-            push(stack, mov);
+        /* ---------- comando a ---------- */
+        else if(strcmp(cmd,"a")==0){
+            char **antes = duplicaTabuleiro(*ptab,*l,*c);
+            int mudou   = aplica_comando_a(*ptab,*l,*c);
+            if(mudou){
+                registaMudancas(stack, antes, *ptab, *l, *c);
+            } else
+                puts("[a] nada para propagar.");
+            for(int i=0;i<*l;i++) free(antes[i]); free(antes);
         }
-    }
-        else if (strcmp(comando, "f") == 0) {
-            // converter para minúscula
-            if (scanf(" %c%d", &letra, &numero) != 2) {
-                printf("Coordenada inválida!\n");
-                continue;
-            }
-            Coordenadas c = { letra - 'a', numero - 1 };
-            char valorAntigo = (*ptabuleiro)[c.y][c.x];
-            if (converteParaMinuscula(*ptabuleiro, *linhas, *colunas, c)) {
-                // se deu certo, empilha
-                Movimento mov;
-                mov.x = c.x; mov.y = c.y;
-                mov.valorAntigo = valorAntigo;
-                mov.valorNovo = (*ptabuleiro)[c.y][c.x];
-                push(stack, mov);
-            }
-        }
-        else if (strcmp(comando, "d") == 0) {
-            // desfazer
-            Movimento mov;
-            if (pop(stack, &mov)) {
-                // Reverte no tabuleiro
-                (*ptabuleiro)[mov.y][mov.x] = mov.valorAntigo;
-            } else {
-                printf("Stack de movimentos vazia, nada a desfazer.\n");
-            }
-        }
-        else if (strcmp(comando, "l") == 0) {
-            // ler tabuleiro de ficheiro
-            char nomeFich[64];
-            if (scanf(" %s", nomeFich) != 1) {
-                printf("Ficheiro inválido!\n");
-                continue;
-            }
-            // Libertamos tabuleiro antigo antes de carregar o novo
-            libertaMemoria(*ptabuleiro, *linhas);
 
-            // Lemos o novo tabuleiro do ficheiro
-            char **novo = lerTabuleiroFicheiro(nomeFich, linhas, colunas);
-            if (!novo) {
-                // Falhou, repor algo?
-                *linhas = *colunas = 0;
-                *ptabuleiro = NULL;
-                printf("Erro ao ler ficheiro.\n");
-            } else {
-                *ptabuleiro = novo;
-                // Zerar stack pois é um novo jogo
-                while (pop(stack, & (Movimento){0})) {}
+        /* ---------- comando A ---------- */
+        else if(strcmp(cmd,"A")==0){
+            char **antes = duplicaTabuleiro(*ptab,*l,*c);
+            int it      = aplica_comando_A(*ptab,*l,*c);
+            if(it){
+                registaMudancas(stack, antes, *ptab, *l, *c);
+                printf("[A] %d iteração(ões) executadas.\n",it);
+            } else
+                puts("[A] nada para propagar.");
+            for(int i=0;i<*l;i++) free(antes[i]); free(antes);
+        }
+        /* ---------- comando R ---------- */
+        else if(strcmp(cmd,"R")==0){
+            char **tmp=duplicaTabuleiro(*ptab,*l,*c);
+            if(resolverJogo(tmp,*l,*c)){
+                copiaTabuleiro(*ptab,tmp,*l,*c);
+                puts("Puzzle resolvido! 🙂");
+            }else
+                puts("Não foi possível resolver 🤔");
+            for(int i=0;i<*l;++i) free(tmp[i]); free(tmp);
+        }
+
+        /* ---------- pintar de branco ---------- */
+        else if(strcmp(cmd,"b")==0){
+            if(scanf(" %c%d",&letra,&num)!=2){ puts("Coord inválida."); continue; }
+            Coordenadas p={letra-'a',num-1};
+            char ant=(*ptab)[p.y][p.x];
+            if(pintaBranco(*ptab,*l,*c,p)){
+                push(stack,(Movimento){p.x,p.y,ant,(*ptab)[p.y][p.x]});
             }
         }
-        else if (strcmp(comando, "g") == 0) {
-            // gravar tabuleiro
-            char nomeFich[64];
-            if (scanf(" %s", nomeFich) != 1) {
-                printf("Ficheiro inválido!\n");
-                continue;
+        /* ---------- riscar ---------- */
+        else if(strcmp(cmd,"r")==0){
+            if(scanf(" %c%d",&letra,&num)!=2){ puts("Coord inválida."); continue; }
+            Coordenadas p={letra-'a',num-1};
+            char ant=(*ptab)[p.y][p.x];
+            if(riscaQuadrado(*ptab,*l,*c,p)){
+                push(stack,(Movimento){p.x,p.y,ant,(*ptab)[p.y][p.x]});
             }
-            gravarTabuleiroFicheiro(nomeFich, *ptabuleiro, *linhas, *colunas);
         }
-        else if (strcmp(comando, "v") == 0) {
-            verificaEstado(*ptabuleiro, *linhas, *colunas);
+        /* ---------- forçar minúscula ---------- */
+        else if(strcmp(cmd,"f")==0){
+            if(scanf(" %c%d",&letra,&num)!=2){ puts("Coord inválida."); continue; }
+            Coordenadas p={letra-'a',num-1};
+            char ant=(*ptab)[p.y][p.x];
+            if(converteParaMinuscula(*ptab,*l,*c,p)){
+                push(stack,(Movimento){p.x,p.y,ant,(*ptab)[p.y][p.x]});
+            }
         }
-        else {
-            printf("Comando inválido!\n");
+        /* ---------- desfazer ---------- */
+        else if(strcmp(cmd,"d")==0){
+            Movimento m;
+            if(pop(stack,&m)) (*ptab)[m.y][m.x]=m.valorAntigo;
+            else puts("Nada a desfazer.");
         }
+        /* ---------- gravar / ler ---------- */
+        else if(strcmp(cmd,"g")==0){
+            char nome[64]; if(scanf(" %s",nome)!=1) continue;
+            gravarTabuleiroFicheiro(nome,*ptab,*l,*c);
+        }
+        else if(strcmp(cmd,"l")==0){
+            char nome[64]; if(scanf(" %s",nome)!=1) continue;
+            libertaMemoria(*ptab,*l);
+            *ptab=lerTabuleiroFicheiro(nome,l,c);
+            while(pop(stack,&(Movimento){0}));
+        }
+        /* ---------- verificar ---------- */
+        else if(strcmp(cmd,"v")==0){
+            verificaEstado(*ptab,*l,*c);
+        }
+
+        /* ---------- comando desconhecido ---------- */
+        else puts("Comando desconhecido.");
     }
 }

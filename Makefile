@@ -1,59 +1,67 @@
-## 1. Variáveis de compilação
-CC          = gcc
-BASEFLAGS   = -Wall -Wextra -pedantic -O1 -fsanitize=address \
-              -fno-omit-frame-pointer -g
-COVFLAGS    = --coverage                  # -fprofile-arcs -ftest-coverage
-INCFLAGS    = -I./src -I/opt/homebrew/Cellar/cunit/2.1-3/include
-CFLAGS      = $(BASEFLAGS) $(COVFLAGS) $(INCFLAGS)
+############################################################
+#        Makefile simples e automático (sem gcov)          #
+############################################################
 
-LIBS        = $(shell pkg-config --libs cunit) -lgcov
+# ——— 1. Ferramentas e flags comuns ————————————————
+CC          := gcc
+WARN_FLAGS  := -Wall -Wextra -pedantic
+OPT_FLAGS   := -O1
+DBG_FLAGS   := -g -fno-omit-frame-pointer
+SAN_FLAGS   := -fsanitize=address        # comenta se não quiseres AddressSanitizer
+CFLAGS_BASE := $(WARN_FLAGS) $(OPT_FLAGS) $(DBG_FLAGS) $(SAN_FLAGS)
 
-## 2. Lista de objectos
-SRC_OBJS    = src/tabuleiro.o src/interface.o src/ficheiros.o src/stack.o
-OBJS_JOGO   = src/main.o $(SRC_OBJS)
+# tenta descobrir flags/libs do CUnit (se não houver, deixa em branco)
+PKGCONF     := pkg-config
+CUNIT_CFLAGS:= $(shell $(PKGCONF) --cflags cunit 2>/dev/null)
+CUNIT_LIBS  := $(shell $(PKGCONF) --libs   cunit 2>/dev/null)
 
-# objectos de cada teste
-OBJS_TEST_TABULEIRO = tests/test-tabuleiro.o  src/tabuleiro.o
-OBJS_TEST_STACK     = tests/test-stack.o      src/stack.o
-OBJS_TEST_FICHEIROS = tests/test-ficheiros.o  src/ficheiros.o
-OBJS_TEST_INTERFACE = tests/test-interface.o  $(SRC_OBJS) 
+CFLAGS      := $(CFLAGS_BASE) $(CUNIT_CFLAGS) -I./src
+LIBS        := $(CUNIT_LIBS)
 
-## 3. Regras genéricas
-.PHONY: jogo testar clean
+# ——— 2. Directórios e listas automáticas ————————————
+SRC_DIR     := src
+TEST_DIR    := tests
 
-# compilar qualquer .c → .o (src ou tests)
+SRC_C       := $(wildcard $(SRC_DIR)/*.c)
+OBJ         := $(SRC_C:.c=.o)
+
+TEST_C      := $(wildcard $(TEST_DIR)/*.c)
+TEST_OBJ    := $(TEST_C:.c=.o)
+TEST_BINS   := $(patsubst $(TEST_DIR)/%.c,%,$(TEST_C))   # nomes dos executáveis
+
+EXEC        := jogo
+
+# ——— 3. Regras genéricas ————————————————————————————
+.PHONY: all clean run testar
+
+all: $(EXEC)
+
+# %.o a partir de %.c (src ou tests)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-## 4. Executável principal
-jogo: $(OBJS_JOGO)
+# executável principal
+$(EXEC): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
-## 5. Testes individuais (executáveis)
-teste_tabuleiro: $(OBJS_TEST_TABULEIRO)
+# regra automática: cada testeX.o -> bin testeX
+# (usa todos os objectos de src exceto main.o)
+$(TEST_BINS): %: $(TEST_DIR)/%.o $(filter-out $(SRC_DIR)/main.o,$(OBJ))
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
-teste_stack: $(OBJS_TEST_STACK)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
-
-teste_ficheiros: $(OBJS_TEST_FICHEIROS)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
-
-teste_interface: $(OBJS_TEST_INTERFACE)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
-
-## 6. Target “testar” – compila tudo, corre testes e imprime cobertura
-testar: teste_tabuleiro teste_stack teste_ficheiros teste_interface
+# alvo para correr todos os testes
+testar: $(TEST_BINS)
 	@echo "--------------  TESTES  --------------"
-	@./teste_tabuleiro
-	@./teste_stack
-	@./teste_ficheiros
-	@./teste_interface
-	@echo "-----------  GCOV  --------------"
-	@gcov -b -c src/*.c | grep -E "Lines executed|File"
+	@for t in $(TEST_BINS); do ./$$t; done
 	@echo "--------------------------------------"
 
-## 7. Limpeza
+# utilidades
+run: $(EXEC)
+	./$(EXEC)
+
 clean:
-	rm -f src/*.o tests/*.o *.gcda *.gcno *.gcov \
-	      jogo teste_tabuleiro teste_stack teste_ficheiros teste_interface
+	rm -f $(OBJ) $(TEST_OBJ) $(EXEC) $(TEST_BINS)
+
+############################################################
+# Fim                                                      #
+############################################################

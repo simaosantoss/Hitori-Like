@@ -1,48 +1,34 @@
 #ifndef TABULEIRO_H
 #define TABULEIRO_H
 
-typedef struct coordenadas {
-    int x; 
-    int y; 
-} Coordenadas;
+#include <stddef.h>
 
-/**
- * Cria espaço para o tabuleiro.
- */
-char **criaTabuleiro(int linhas, int colunas);
+/* ---------- estruturas básicas ---------- */
+typedef struct { int x, y; } Coordenadas;
 
-/**
- * - Não vamos usar muito isto pois o prof pediu para ler de ficheiro.
- */
-void recebeTabuleiro(char **tabuleiro, int linhas, int colunas);
+/* ---------- API do tabuleiro ---------- */
+char **criaTabuleiro    (int linhas, int colunas);
+void   imprimeTabuleiro (char **tab,int l,int c);
 
-/**
- * Imprime o tabuleiro no stdout.
- */
-void imprimeTabuleiro(char **tabuleiro, int linhas, int colunas);
+/* edição de células */
+int    pintaBranco      (char **tab,int l,int c,Coordenadas p);   /* torna maiúscula */
+int    riscaQuadrado    (char **tab,int l,int c,Coordenadas p);   /* coloca '#'      */
+int    converteParaMinuscula(char **tab,int l,int c,Coordenadas p);
 
-/**
- * Pinta de branco a casa [ponto.y][ponto.x], retornando 1 se OK, 0 se erro.
- * - Verifica se já existe outra maiúscula igual na mesma linha ou coluna.
- * - Verifica se não está riscada, etc.
- */
-int pintaBranco(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
+/* verificação global (‘v’) */
+int    verificaEstado   (char **tab,int l,int c);
 
-/**
- * Risca a casa [ponto.y][ponto.x], retornando 1 se OK, 0 se erro.
- * - Se estiver maiúscula, devolve erro (tem que ser minúscula antes).
- * - Verifica adjacências, etc.
- */
-int riscaQuadrado(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
+/* comandos do projeto */
+int    aplica_comando_a (char **tab,int l,int c);
+int    aplica_comando_A (char **tab,int l,int c);
+int    resolverJogo     (char **tab,int l,int c);
 
-/**
- * Converte a casa de maiúscula p/ minúscula (fundo),
- * retornando 1 se OK, 0 se erro.
- * - Se não estiver maiúscula, retorna 0.
- */
-int converteParaMinuscula(char **tabuleiro, int linhas, int colunas, Coordenadas ponto);
+/* utilitários */
+char **duplicaTabuleiro (char **src,int l,int c);
+void   copiaTabuleiro   (char **dst,char **src,int l,int c);
 
-/* devolve 1 se não encontrar problemas, 0 caso contrário */
-int verificaEstado(char **tab, int linhas, int colunas);
+
+int    verificaEstado   (char **tab,int l,int c);   /* completa (inclui conectividade) */
+int    regrasBasicasOk  (char **tab,int l,int c);   /* sem conectividade – para o R    */
 
 #endif
