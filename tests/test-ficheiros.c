@@ -1,7 +1,7 @@
+#include <CUnit/Basic.h> 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <CUnit/Basic.h>
 #include "ficheiros.h"
 
 void testGravarELerValido(void) {
@@ -70,9 +70,12 @@ void testFormatoInvalido(void) {
 
     int linhas = 0, colunas = 0;
     char **tabuleiro = lerTabuleiroFicheiro("invalido.txt", &linhas, &colunas);
-    CU_ASSERT_PTR_NOT_NULL(tabuleiro); // Ainda pode alocar, mesmo se dados errados
-    // Opcional: validar que os dados lidos não batem certo
-    libertaMemoria(tabuleiro, linhas);
+    if (tabuleiro == NULL) {
+        CU_FAIL("Erro esperado: Ficheiro inválido não deve ser lido corretamente");
+    } else {
+        libertaMemoria(tabuleiro, linhas);
+    }
+
     remove("invalido.txt");
 }
 

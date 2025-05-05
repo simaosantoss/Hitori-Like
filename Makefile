@@ -1,5 +1,5 @@
 ############################################################
-#        Makefile simples e automático (sem gcov)          #
+#        Makefile simples e automático (com CUnit)         #
 ############################################################
 
 # ——— 1. Ferramentas e flags comuns ————————————————
@@ -10,15 +10,15 @@ DBG_FLAGS   := -g -fno-omit-frame-pointer
 SAN_FLAGS   := -fsanitize=address        # comenta se não quiseres AddressSanitizer
 CFLAGS_BASE := $(WARN_FLAGS) $(OPT_FLAGS) $(DBG_FLAGS) $(SAN_FLAGS)
 
-# tenta descobrir flags/libs do CUnit (se não houver, deixa em branco)
+# ——— 2. Configuração da biblioteca CUnit —————————
 PKGCONF     := pkg-config
 CUNIT_CFLAGS:= $(shell $(PKGCONF) --cflags cunit 2>/dev/null)
-CUNIT_LIBS  := $(shell $(PKGCONF) --libs   cunit 2>/dev/null)
+CUNIT_LIBS  := $(shell $(PKGCONF) --libs cunit 2>/dev/null)
 
 CFLAGS      := $(CFLAGS_BASE) $(CUNIT_CFLAGS) -I./src
-LIBS        := $(CUNIT_LIBS)
+LIBS        := $(CUNIT_LIBS) -lcunit  # Adiciona a flag -lcunit
 
-# ——— 2. Directórios e listas automáticas ————————————
+# ——— 3. Directórios e listas automáticas ————————————
 SRC_DIR     := src
 TEST_DIR    := tests
 
@@ -31,7 +31,7 @@ TEST_BINS   := $(patsubst $(TEST_DIR)/%.c,%,$(TEST_C))   # nomes dos executávei
 
 EXEC        := jogo
 
-# ——— 3. Regras genéricas ————————————————————————————
+# ——— 4. Regras genéricas ————————————————————————————
 .PHONY: all clean run testar
 
 all: $(EXEC)
@@ -59,6 +59,7 @@ testar: $(TEST_BINS)
 run: $(EXEC)
 	./$(EXEC)
 
+# limpa os ficheiros gerados
 clean:
 	rm -f $(OBJ) $(TEST_OBJ) $(EXEC) $(TEST_BINS)
 
