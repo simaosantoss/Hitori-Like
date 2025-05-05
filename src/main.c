@@ -49,7 +49,7 @@ int main(void) {
         free(tabuleiro);
     }
 
-    // Esvazia a stack (libera todos os nós) antes de terminar o programa.
+    // Esvazia a stack (liberta todos os nós) antes de terminar o programa.
     Movimento mov;
     while (pop(&stack, &mov)) {
         // Apenas esvaziamos a stack

@@ -5,9 +5,7 @@
 #include <stdbool.h>
 #include "tabuleiro.h"
 
-/* -----------------------------------------------------------
-   Conectividade das casas brancas
-   ----------------------------------------------------------- */
+/*   Conectividade das casas brancas */
 static int casasBrancasConectadas(char **tab,int l,int c)
 {
     int total = 0, sx = -1, sy = -1;
@@ -17,7 +15,7 @@ static int casasBrancasConectadas(char **tab,int l,int c)
                 total++;
                 if (sx == -1){ sx = x; sy = y; }
             }
-    if (total == 0) return 1;                   /* não há brancas → vacuamente ligadas */
+    if (total == 0) return 1;                   /* não há brancas → ligadas */
 
     bool *vis = calloc(l * c, sizeof *vis);
     int  *qx  = malloc(l * c * sizeof *qx);
@@ -49,9 +47,7 @@ static int casasBrancasConectadas(char **tab,int l,int c)
     return visit == total;
 }
 
-/* -----------------------------------------------------------
-   '#' tem de estar rodeado apenas por brancas
-   ----------------------------------------------------------- */
+/* '#' tem de estar rodeado apenas por brancas */
 static int vizinhosSaoBrancos(char **tab,int l,int c,Coordenadas p)
 {
     const int dx[4] = {1,-1,0,0}, dy[4] = {0,0,1,-1};
@@ -65,7 +61,7 @@ static int vizinhosSaoBrancos(char **tab,int l,int c,Coordenadas p)
 
 
 
-/* ---------- helpers internos (duplicados, # mal vizinho, minúsculas) ---------- */
+/*helpers internos (duplicados, # mal vizinho, minúsculas) */
 static int regrasBasicas(char **tab,int l,int c,
                          int *dup,int *hash,int *minus)
 {
@@ -95,14 +91,14 @@ static int regrasBasicas(char **tab,int l,int c,
     return !(*dup||*hash||*minus);
 }
 
-/* ---------- API: regrasBasicasOk ---------- */
+/* regrasBasicasOk */
 int regrasBasicasOk(char **tab,int l,int c)
 {
     int d,h,m;
     return regrasBasicas(tab,l,c,&d,&h,&m);
 }
 
-/* ---------- API: verificaEstado (com mensagens) ---------- */
+/* verificaEstado (com mensagens)*/
 int verificaEstado(char **tab,int l,int c)
 {
     int dup, hash, minus;

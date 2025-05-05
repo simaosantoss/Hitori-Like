@@ -6,7 +6,7 @@
 #include "ficheiros.h"
 #include "stack.h"
 
-/* ---------- NOVO: registar alterações em bloco ---------- */
+/* ---------- registar alterações em bloco ---------- */
 static void registaMudancas(StackMovimentos *st,
                             char **antes,char **depois,int l,int c)
 {
