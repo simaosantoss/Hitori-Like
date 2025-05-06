@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/**
- * Liberta a memória alocada para o tabuleiro.
- * Recebe o ponteiro para o tabuleiro, o número de linhas.
+/* Liberta a memória alocada para o tabuleiro. Recebe o ponteiro para o tabuleiro, o número de linhas.
  */
 void libertaMemoria(char **tabuleiro, int linhas) {
     for (int i = 0; i < linhas; i++) {
@@ -13,10 +11,7 @@ void libertaMemoria(char **tabuleiro, int linhas) {
     free(tabuleiro);
 }
 
-/**
- * Cria um tabuleiro com o número especificado de linhas e colunas.
- * Aloca memória para o tabuleiro e inicializa cada posição.
- */
+/* Cria um tabuleiro com o número especificado de linhas e colunas. Aloca memória para o tabuleiro e inicializa cada posição. */
 char **criarTabuleiro(int linhas, int colunas) {
     char **tabuleiro = (char **)malloc(linhas * sizeof(char *));
     if (!tabuleiro) {
@@ -47,11 +42,7 @@ char **criarTabuleiro(int linhas, int colunas) {
     return tabuleiro;
 }
 
-/**
- * Lê um tabuleiro de um ficheiro de texto.
- * A primeira linha do ficheiro com as dimensões (linhas colunas) é ignorada.
- * As seguintes linhas representam o tabuleiro real.
- */
+/* Lê um tabuleiro de um ficheiro de texto. A primeira linha do ficheiro com as dimensões (linhas colunas) é ignorada. As seguintes linhas representam o tabuleiro real.*/
 char **lerTabuleiroFicheiro(const char *nomeFicheiro, int *linhas, int *colunas) {
     FILE *ficheiro = fopen(nomeFicheiro, "r");
     if (!ficheiro) {
@@ -106,11 +97,7 @@ char **lerTabuleiroFicheiro(const char *nomeFicheiro, int *linhas, int *colunas)
     return tabuleiro;
 }
 
-/**
- * Guarda um tabuleiro num ficheiro.
- * Primeira linha com o número de linhas e colunas.
- * Segue-se o conteúdo do tabuleiro.
- */
+/* Guarda um tabuleiro num ficheiro. Primeira linha com o número de linhas e colunas. Segue-se o conteúdo do tabuleiro. */
 int gravarTabuleiroFicheiro(const char *nomeFicheiro, char **tabuleiro, int linhas, int colunas) {
     FILE *ficheiro = fopen(nomeFicheiro, "w");
     if (!ficheiro) {

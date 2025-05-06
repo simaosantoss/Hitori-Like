@@ -37,7 +37,7 @@ int riscaQuadrado(char **t,int l,int c,Coordenadas p)
     t[p.y][p.x]='#';
     return 1;
 }
-int converteParaMinuscula(char **t,int l,int c,Coordenadas p)
+int converteParaMinuscula(char **t,Coordenadas p)
 {
     if(!isupper(t[p.y][p.x])){ puts("Não é maiúscula."); return 0;}
     t[p.y][p.x]=tolower(t[p.y][p.x]);
@@ -145,10 +145,16 @@ int resolverJogo(char **tab,int l,int c)
         pintaBranco(tmp,l,c,cel);
         if(resolverJogo(tmp,l,c)){
             copiaTabuleiro(tab,tmp,l,c);
-            for(int i=0;i<l;++i) free(tmp[i]); free(tmp);
+            for (int i = 0; i < l; ++i) {
+                free(tmp[i]);
+            }
+            free(tmp);
             return 1;
         }
-        for(int i=0;i<l;++i) free(tmp[i]); free(tmp);
+        for (int i = 0; i < l; ++i) {
+                free(tmp[i]);
+            }
+            free(tmp);
     }
     /* 2) supor # */
     {
@@ -156,10 +162,17 @@ int resolverJogo(char **tab,int l,int c)
         riscaQuadrado(tmp,l,c,cel);
         if(resolverJogo(tmp,l,c)){
             copiaTabuleiro(tab,tmp,l,c);
-            for(int i=0;i<l;++i) free(tmp[i]); free(tmp);
+            for (int i = 0; i < l; ++i) {
+                free(tmp[i]);
+            }
+            free(tmp);
             return 1;
         }
-        for(int i=0;i<l;++i) free(tmp[i]); free(tmp);
+        for (int i = 0; i < l; ++i) {
+            free(tmp[i]);
+        }
+        free(tmp);
+
     }
     return 0;                                     /* nenhum ramo resultou */
 }

@@ -82,7 +82,7 @@ void testConverteParaMinuscula(void) {
 
     Coordenadas p = {1,0};
     pintaBranco(tab, l, c, p);
-    CU_ASSERT_EQUAL(converteParaMinuscula(tab, l, c, p), 1);
+    CU_ASSERT_EQUAL(converteParaMinuscula(tab, p), 1);
     CU_ASSERT_TRUE(islower(tab[0][1]));
     for (int i = 0; i < l; ++i) free(tab[i]); 
     free(tab);

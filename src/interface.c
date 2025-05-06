@@ -6,7 +6,7 @@
 #include "ficheiros.h"
 #include "stack.h"
 
-/* ---------- registar alterações em bloco ---------- */
+/* registar alterações em bloco */
 static void registaMudancas(StackMovimentos *st,
                             char **antes,char **depois,int l,int c)
 {
@@ -21,15 +21,18 @@ void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
 {
     char cmd[64], letra; int num;
 
-    while(1){
-        imprimeTabuleiro(*ptab,*l,*c);
+    while (1) {
+        imprimeTabuleiro(*ptab, *l, *c);
         puts("Comandos: b/r/f <coord>, a, A, R, v, d, g/l <fic>, s");
-        if(scanf(" %s",cmd)!=1) continue;
+        if (scanf(" %s", cmd) != 1) continue;
 
-        /* ---------- sair ---------- */
-        if(strcmp(cmd,"s")==0){ puts("Até breve!"); break; }
+        /* sair */
+        if (strcmp(cmd, "s") == 0) {
+            puts("Até breve!"); 
+            break;
+        }
 
-        /* ---------- comando a ---------- */
+        /*comando a*/
         else if(strcmp(cmd,"a")==0){
             char **antes = duplicaTabuleiro(*ptab,*l,*c);
             int mudou   = aplica_comando_a(*ptab,*l,*c);
@@ -37,10 +40,13 @@ void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
                 registaMudancas(stack, antes, *ptab, *l, *c);
             } else
                 puts("[a] nada para propagar.");
-            for(int i=0;i<*l;i++) free(antes[i]); free(antes);
+            for (int i = 0; i < *l; i++) {
+                free(antes[i]);
+            }
+            free(antes);
         }
 
-        /* ---------- comando A ---------- */
+        /*comando A*/
         else if(strcmp(cmd,"A")==0){
             char **antes = duplicaTabuleiro(*ptab,*l,*c);
             int it      = aplica_comando_A(*ptab,*l,*c);
@@ -49,9 +55,12 @@ void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
                 printf("[A] %d iteração(ões) executadas.\n",it);
             } else
                 puts("[A] nada para propagar.");
-            for(int i=0;i<*l;i++) free(antes[i]); free(antes);
+            for (int i = 0; i < *l; i++) {
+                free(antes[i]);
+            }
+            free(antes);   
         }
-        /* ---------- comando R ---------- */
+        /*comando R*/
         else if(strcmp(cmd,"R")==0){
             char **tmp=duplicaTabuleiro(*ptab,*l,*c);
             if(resolverJogo(tmp,*l,*c)){
@@ -59,10 +68,13 @@ void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
                 puts("Puzzle resolvido! 🙂");
             }else
                 puts("Não foi possível resolver 🤔");
-            for(int i=0;i<*l;++i) free(tmp[i]); free(tmp);
+            for (int i = 0; i < *l; i++) {
+                free(tmp[i]);
+            }
+            free(tmp);
         }
 
-        /* ---------- pintar de branco ---------- */
+        /*pintar de branco*/
         else if(strcmp(cmd,"b")==0){
             if(scanf(" %c%d",&letra,&num)!=2){ puts("Coord inválida."); continue; }
             Coordenadas p={letra-'a',num-1};
@@ -71,7 +83,7 @@ void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
                 push(stack,(Movimento){p.x,p.y,ant,(*ptab)[p.y][p.x]});
             }
         }
-        /* ---------- riscar ---------- */
+        /*riscar*/
         else if(strcmp(cmd,"r")==0){
             if(scanf(" %c%d",&letra,&num)!=2){ puts("Coord inválida."); continue; }
             Coordenadas p={letra-'a',num-1};
@@ -80,22 +92,22 @@ void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
                 push(stack,(Movimento){p.x,p.y,ant,(*ptab)[p.y][p.x]});
             }
         }
-        /* ---------- forçar minúscula ---------- */
+        /*forçar minúscula*/
         else if(strcmp(cmd,"f")==0){
             if(scanf(" %c%d",&letra,&num)!=2){ puts("Coord inválida."); continue; }
             Coordenadas p={letra-'a',num-1};
             char ant=(*ptab)[p.y][p.x];
-            if(converteParaMinuscula(*ptab,*l,*c,p)){
+            if(converteParaMinuscula(*ptab,p)){
                 push(stack,(Movimento){p.x,p.y,ant,(*ptab)[p.y][p.x]});
             }
         }
-        /* ---------- desfazer ---------- */
+        /*desfazer*/
         else if(strcmp(cmd,"d")==0){
             Movimento m;
             if(pop(stack,&m)) (*ptab)[m.y][m.x]=m.valorAntigo;
             else puts("Nada a desfazer.");
         }
-        /* ---------- gravar / ler ---------- */
+        /*gravar / ler */
         else if(strcmp(cmd,"g")==0){
             char nome[64]; if(scanf(" %s",nome)!=1) continue;
             gravarTabuleiroFicheiro(nome,*ptab,*l,*c);
@@ -106,12 +118,12 @@ void lerComando(char ***ptab,int *l,int *c,StackMovimentos *stack)
             *ptab=lerTabuleiroFicheiro(nome,l,c);
             while(pop(stack,&(Movimento){0}));
         }
-        /* ---------- verificar ---------- */
+        /*  verificar  */
         else if(strcmp(cmd,"v")==0){
             verificaEstado(*ptab,*l,*c);
         }
 
-        /* ---------- comando desconhecido ---------- */
+        /*  comando desconhecido  */
         else puts("Comando desconhecido.");
     }
 }

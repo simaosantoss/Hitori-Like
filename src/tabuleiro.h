@@ -13,7 +13,7 @@ void   imprimeTabuleiro (char **tab,int l,int c);
 /* edição de células */
 int    pintaBranco      (char **tab,int l,int c,Coordenadas p);   /* torna maiúscula */
 int    riscaQuadrado    (char **tab,int l,int c,Coordenadas p);   /* coloca # */
-int    converteParaMinuscula(char **tab,int l,int c,Coordenadas p);
+int converteParaMinuscula(char **t,Coordenadas p);
 
 /* verificação global (‘v’) */
 int    verificaEstado   (char **tab,int l,int c);
