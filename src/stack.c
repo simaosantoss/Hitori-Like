@@ -3,7 +3,7 @@
 
 void initStack(StackMovimentos *s) { s->topo = NULL; }
 
-/* -------- operações -------- */
+/* operações */
 void push(StackMovimentos *s, Movimento m)
 {
     Nodo *n = malloc(sizeof *n);
@@ -23,7 +23,7 @@ int pop(StackMovimentos *s, Movimento *m)
     return 1;
 }
 
-/* -------- destruição -------- */
+/* destruição */
 void destruirStack(StackMovimentos *s)
 {
     Movimento tmp;

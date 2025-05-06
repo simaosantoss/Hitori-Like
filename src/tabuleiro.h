@@ -3,16 +3,16 @@
 
 #include <stddef.h>
 
-/* ---------- estruturas básicas ---------- */
+/* estruturas básicas */
 typedef struct { int x, y; } Coordenadas;
 
-/* ---------- API do tabuleiro ---------- */
+/* API do tabuleiro */
 char **criaTabuleiro    (int linhas, int colunas);
 void   imprimeTabuleiro (char **tab,int l,int c);
 
 /* edição de células */
 int    pintaBranco      (char **tab,int l,int c,Coordenadas p);   /* torna maiúscula */
-int    riscaQuadrado    (char **tab,int l,int c,Coordenadas p);   /* coloca '#'      */
+int    riscaQuadrado    (char **tab,int l,int c,Coordenadas p);   /* coloca # */
 int    converteParaMinuscula(char **tab,int l,int c,Coordenadas p);
 
 /* verificação global (‘v’) */
@@ -28,7 +28,7 @@ char **duplicaTabuleiro (char **src,int l,int c);
 void   copiaTabuleiro   (char **dst,char **src,int l,int c);
 
 
-int    verificaEstado   (char **tab,int l,int c);   /* completa (inclui conectividade) */
-int    regrasBasicasOk  (char **tab,int l,int c);   /* sem conectividade – para o R    */
+int    verificaEstado   (char **tab,int l,int c);   /* completa Finalmente (!!) (inclui conectividade) */
+int    regrasBasicasOk  (char **tab,int l,int c);   /* sem conectividade – para o R (estava a dar erros) */
 
 #endif

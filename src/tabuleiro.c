@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "tabuleiro.h"
 
-/* ---------- criação / IO simples ---------- */
+/* criação / IO simples */
 char **criaTabuleiro(int linhas,int colunas)
 {
     char **t = malloc(linhas*sizeof *t);
@@ -20,7 +20,7 @@ void imprimeTabuleiro(char **t,int l,int c)
     }
 }
 
-/* ---------- primitivas de edição ---------- */
+/* primitivas de edição */
 int pintaBranco(char **t,int l,int c,Coordenadas p)
 {
     if(p.x<0||p.x>=c||p.y<0||p.y>=l)        { puts("Fora do tabuleiro."); return 0;}
@@ -44,7 +44,7 @@ int converteParaMinuscula(char **t,int l,int c,Coordenadas p)
     return 1;
 }
 
-/* ---------- implementação do comando a ---------- */
+/* implementação do comando a */
 static int risca_replicas(char **tab,int l,int c)
 {
     int mudou=0;
@@ -95,7 +95,7 @@ int aplica_comando_A(char **tab,int l,int c)
     return total;
 }
 
-/* ---------- helpers para o solver (R) ---------- */
+/* helpers para o solver (R) */
 char **duplicaTabuleiro(char **src,int l,int c)
 {
     char **new=criaTabuleiro(l,c);
@@ -128,14 +128,14 @@ static Coordenadas escolhe_celula(char **t,int l,int c)
     return (Coordenadas){-1,-1};
 }
 
-/* ---------- backtracking (comando R) ---------- */
+/* backtracking (comando R) */
 int resolverJogo(char **tab,int l,int c)
 {
-    aplica_comando_A(tab,l,c);                     /* 1º propagação             */
+    aplica_comando_A(tab,l,c);                     /* 1º propagação */
     if(!regrasBasicasOk(tab,l,c)) return 0;        /* descarta ramos impossíveis*/
 
-    if(!tem_minusculas(tab,l,c))                   /* se já não há incógnitas…  */
-        return verificaEstado(tab,l,c);            /* …verifica ligação final   */
+    if(!tem_minusculas(tab,l,c))                   /* se já não há incógnitas...  */
+        return verificaEstado(tab,l,c);            /* ..verifica ligação final */
 
     Coordenadas cel = escolhe_celula(tab,l,c);
 
@@ -161,5 +161,5 @@ int resolverJogo(char **tab,int l,int c)
         }
         for(int i=0;i<l;++i) free(tmp[i]); free(tmp);
     }
-    return 0;                                     /* nenhum ramo resultou      */
+    return 0;                                     /* nenhum ramo resultou */
 }

@@ -15,7 +15,7 @@ static int casasBrancasConectadas(char **tab,int l,int c)
                 total++;
                 if (sx == -1){ sx = x; sy = y; }
             }
-    if (total == 0) return 1;                   /* não há brancas → ligadas */
+    if (total == 0) return 1;                   /* não há brancas -> ligadas */
 
     bool *vis = calloc(l * c, sizeof *vis);
     int  *qx  = malloc(l * c * sizeof *qx);
@@ -54,7 +54,7 @@ static int vizinhosSaoBrancos(char **tab,int l,int c,Coordenadas p)
     for (int k = 0; k < 4; ++k){
         int nx = p.x + dx[k], ny = p.y + dy[k];
         if (nx<0 || nx>=c || ny<0 || ny>=l) continue;
-        if (!isupper(tab[ny][nx])) return 0;   /* vizinho não é branco  */
+        if (!isupper(tab[ny][nx])) return 0;   /* vizinho não é branco */
     }
     return 1;
 }
@@ -91,14 +91,12 @@ static int regrasBasicas(char **tab,int l,int c,
     return !(*dup||*hash||*minus);
 }
 
-/* regrasBasicasOk */
 int regrasBasicasOk(char **tab,int l,int c)
 {
     int d,h,m;
     return regrasBasicas(tab,l,c,&d,&h,&m);
 }
 
-/* verificaEstado (com mensagens)*/
 int verificaEstado(char **tab,int l,int c)
 {
     int dup, hash, minus;
