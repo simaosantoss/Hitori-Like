@@ -6,4 +6,6 @@
 
 void lerComando(char ***ptab, int *lin, int *col, StackMovimentos *stk);
 
+void guardaOriginal(char **tab, int l, int c);
+
 #endif

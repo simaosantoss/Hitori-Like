@@ -6,54 +6,42 @@
 #include "stack.h"
 #include "ficheiros.h"
 
-int main(void) {
+int main(void)
+{
     int linhas, colunas;
-    char nomeFicheiro[64];  // Variável para armazenar o nome do ficheiro
-    char comando[2];  // Variável para armazenar o comando 'l'
+    char nomeFicheiro[64], comando[2];
+    char **tabuleiro = NULL;
 
-    char **tabuleiro = NULL;  // Declarar o tabuleiro fora do loop para ser acessível depois
-
-    // Solicita obrigatoriamente o comando 'l <ficheiro>'
+    /* Obriga a carregar um puzzle logo à partida */
     while (1) {
         printf("Digite o comando 'l <ficheiro>' para ler o tabuleiro:\n");
         if (scanf(" %s %s", comando, nomeFicheiro) != 2) {
-            printf("Comando inválido! Use 'l <ficheiro>' para ler o tabuleiro.\n");
-            continue; // Solicita novamente o comando
+            puts("Comando inválido! Use 'l <ficheiro>'.");
+            continue;
         }
-
-        if (strcmp(comando, "l") == 0) {
-            // Tenta ler o tabuleiro do ficheiro fornecido.
-            tabuleiro = lerTabuleiroFicheiro(nomeFicheiro, &linhas, &colunas);
+        if (strcmp(comando,"l") == 0) {
+            tabuleiro = lerTabuleiroFicheiro(nomeFicheiro,&linhas,&colunas);
             if (!tabuleiro) {
-                printf("Erro ao ler o tabuleiro do ficheiro '%s'.\n", nomeFicheiro);
-                continue;  // Solicita novamente o comando
+                printf("Erro ao ler '%s'.\n", nomeFicheiro);
+                continue;
             }
-            break;  // Tabuleiro lido com sucesso, continua para os outros comandos
-        } else {
-            printf("Comando inválido! Use 'l <ficheiro>' para ler o tabuleiro.\n");
+            break;
         }
+        puts("Comando inválido! Use 'l <ficheiro>'.");
     }
 
-    // Cria e inicializa a stack que armazenará os movimentos (para implementar o comando de "undo").
+    /* Guarda a versão imaculada para o comando R */
+    guardaOriginal(tabuleiro, linhas, colunas);
+
+    /* Stack para undo */
     StackMovimentos stack;
     initStack(&stack);
 
-    // Inicia o modo REPL (Read-Evaluate-Print Loop) onde o utilizador poderá interagir com o jogo.
-    lerComando(&tabuleiro, &linhas, &colunas, &stack);
+    /* Ciclo REPL */
+    lerComando(&tabuleiro,&linhas,&colunas,&stack);
 
-    // Libera a memória alocada para o tabuleiro.
-    if (tabuleiro) {
-        for (int i = 0; i < linhas; i++) {
-            free(tabuleiro[i]);
-        }
-        free(tabuleiro);
-    }
-
-    // Esvazia a stack (liberta todos os nós) antes de terminar o programa.
-    Movimento mov;
-    while (pop(&stack, &mov)) {
-        // Apenas esvaziamos a stack
-    }
-
+    /* Libertação de memória */
+    if (tabuleiro) libertaMemoria(tabuleiro, linhas);
+    destruirStack(&stack);
     return 0;
 }
