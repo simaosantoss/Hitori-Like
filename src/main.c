@@ -6,10 +6,9 @@
 #include "stack.h"
 #include "ficheiros.h"
 
-int main(void)
-{
-    int linhas, colunas;
-    char nomeFicheiro[64], comando[2];
+int main(void) {
+    int   linhas, colunas;
+    char  nomeFicheiro[64], comando[2];
     char **tabuleiro = NULL;
 
     /* Obriga a carregar um puzzle logo à partida */
@@ -19,8 +18,8 @@ int main(void)
             puts("Comando inválido! Use 'l <ficheiro>'.");
             continue;
         }
-        if (strcmp(comando,"l") == 0) {
-            tabuleiro = lerTabuleiroFicheiro(nomeFicheiro,&linhas,&colunas);
+        if (strcmp(comando, "l") == 0) {
+            tabuleiro = lerTabuleiroFicheiro(nomeFicheiro, &linhas, &colunas);
             if (!tabuleiro) {
                 printf("Erro ao ler '%s'.\n", nomeFicheiro);
                 continue;
@@ -38,7 +37,7 @@ int main(void)
     initStack(&stack);
 
     /* Ciclo REPL */
-    lerComando(&tabuleiro,&linhas,&colunas,&stack);
+    lerComando(&tabuleiro, &linhas, &colunas, &stack);
 
     /* Libertação de memória */
     if (tabuleiro) libertaMemoria(tabuleiro, linhas);
