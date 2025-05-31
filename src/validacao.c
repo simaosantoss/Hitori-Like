@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "tabuleiro.h"
+#include "../include/tabuleiro.h"
 
 /*   Conectividade das casas brancas */
 static int casasBrancasConectadas(char **tab, int l, int c) {

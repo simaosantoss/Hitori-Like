@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdbool.h>
-#include "tabuleiro.h"
+#include "../include/tabuleiro.h"
 
 /* criação / IO simples */
 char **criaTabuleiro(int linhas, int colunas) {

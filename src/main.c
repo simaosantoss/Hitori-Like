@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tabuleiro.h"
-#include "interface.h"
-#include "stack.h"
-#include "ficheiros.h"
+#include "../include/tabuleiro.h"
+#include "../include/interface.h"
+#include "../include/stack.h"
+#include "../include/ficheiros.h"
 
 int main(void) {
     int   linhas, colunas;

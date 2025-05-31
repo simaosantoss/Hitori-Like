@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "tabuleiro.h"
-#include "interface.h"
-#include "ficheiros.h"
-#include "stack.h"
+#include "../include/tabuleiro.h"
+#include "../include/interface.h"
+#include "../include/ficheiros.h"
+#include "../include/stack.h"
 
 /*──────────────────  cópia original do puzzle  ──────────────────*/
 static char **tabOriginal = NULL;

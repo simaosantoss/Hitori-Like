@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "stack.h"
+#include "../include/stack.h"
 
 void initStack(StackMovimentos *s) { s->topo = NULL; }
 
