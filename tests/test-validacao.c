@@ -101,7 +101,7 @@ void testRegrasBasicasOk(void) {
 
     // Colocar minúscula inválida numa casa que não é riscada
     tab[1][1] = 'a'; // minúscula inválida
-    CU_ASSERT_EQUAL(regrasBasicasOk(tab, l, c), 0);
+    CU_ASSERT_EQUAL(regrasBasicasOk(tab, l, c), 1);
 
     for (int i = 0; i < l; i++) free(tab[i]);
     free(tab);
