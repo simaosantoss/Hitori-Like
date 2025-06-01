@@ -75,7 +75,7 @@ static int vizinhosSaoBrancos(char **tab, int l, int c, Coordenadas p) {
     return 1;
 }
 
-/* helpers internos (duplicados, # mal vizinho, minúsculas) */
+/*duplicados, # mal vizinho, minúsculas */
 static int regrasBasicas(char **tab, int l, int c,
                          int *dup, int *hash, int *minus) {
     int linha[l][26];

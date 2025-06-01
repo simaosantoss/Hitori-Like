@@ -1,6 +1,5 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
-
 #include "ficheiros.h"  
 #include "stack.h"       
 

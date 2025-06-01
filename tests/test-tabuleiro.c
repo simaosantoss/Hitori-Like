@@ -120,7 +120,6 @@ void testConectividadeInvalida(void) {
         for (int x = 0; x < c; ++x)
             tab[y][x] = 'c';
 
-    // Marca algumas casas como 'A' e 'B' para garantir que não estão conectadas
     tab[0][0] = 'A';
     tab[2][2] = 'B';
 
@@ -128,7 +127,7 @@ void testConectividadeInvalida(void) {
     int estado = verificaEstado(tab, l, c);
 
     // Verifica se o estado indica que a conectividade está quebrada
-    CU_ASSERT_EQUAL(estado, 0);  // Esperamos que o estado retorne 0 indicando conectividade quebrada
+    CU_ASSERT_EQUAL(estado, 0);  // Esperamos que o estado retorne 0 o que indica conectividade quebrada
 
     for (int i = 0; i < l; ++i) free(tab[i]);
     free(tab);

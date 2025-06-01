@@ -15,8 +15,8 @@ typedef struct {
     Nodo *topo;
 } StackMovimentos;
 
-void destruirStack(StackMovimentos *s);      /* libertar toda a memória */
-void initStack(StackMovimentos *s);          /* nome usado no main */
+void destruirStack(StackMovimentos *s);      // libertar toda a memória
+void initStack(StackMovimentos *s);          // nome usado no main 
 
 void push(StackMovimentos *s, Movimento m);
 int  pop (StackMovimentos *s, Movimento *m);

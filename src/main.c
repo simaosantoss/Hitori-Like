@@ -11,7 +11,7 @@ int main(void) {
     char  nomeFicheiro[64], comando[2];
     char **tabuleiro = NULL;
 
-    /* Obriga a carregar um puzzle logo à partida */
+    // Obriga a carregar um puzzle logo à partida 
     while (1) {
         printf("Digite o comando 'l <ficheiro>' para ler o tabuleiro:\n");
         if (scanf(" %s %s", comando, nomeFicheiro) != 2) {
@@ -29,17 +29,17 @@ int main(void) {
         puts("Comando inválido! Use 'l <ficheiro>'.");
     }
 
-    /* Guarda a versão imaculada para o comando R */
+    // Guarda a versão imaculada para o comando R 
     guardaOriginal(tabuleiro, linhas, colunas);
 
-    /* Stack para undo */
+    // Stack para undo 
     StackMovimentos stack;
     initStack(&stack);
 
-    /* Ciclo REPL */
+    // Ciclo REPL 
     lerComando(&tabuleiro, &linhas, &colunas, &stack);
 
-    /* Libertação de memória */
+    // Libertação de memória 
     if (tabuleiro) libertaMemoria(tabuleiro, linhas);
     destruirStack(&stack);
     return 0;

@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "../include/tabuleiro.h"
 
-/* criação / IO simples */
+/* criação do tabuleiro */
 char **criaTabuleiro(int linhas, int colunas) {
     char **t = malloc(linhas * sizeof *t);
     for (int i = 0; i < linhas; ++i)
@@ -67,7 +67,7 @@ int converteParaMinuscula(char **t, Coordenadas p) {
     return 1;
 }
 
-/* implementação do comando a */
+/* Implementação do comando a */
 static int risca_replicas(char **tab, int l, int c) {
     int mudou = 0;
     for (int y = 0; y < l; ++y)
@@ -117,7 +117,7 @@ int aplica_comando_A(char **tab, int l, int c) {
     return total;
 }
 
-/* helpers para o solver (R) */
+/* helpers/aux para o coamndo R */
 char **duplicaTabuleiro(char **src, int l, int c) {
     char **new = criaTabuleiro(l, c);
     for (int y = 0; y < l; ++y)
@@ -157,18 +157,18 @@ static Coordenadas escolhe_celula(char **t, int l, int c) {
     return (Coordenadas){-1, -1};
 }
 
-/* backtracking (comando R) */
+// backtracking (comando R)
 int resolverJogo(char **tab, int l, int c) {
-    aplica_comando_A(tab, l, c);                 /* 1º propagação */
+    aplica_comando_A(tab, l, c);                 // 1a propagação 
     if (!regrasBasicasOk(tab, l, c))
-        return 0;                                /* descarta ramos impossíveis */
+        return 0;                                // descarta ramos impossíveis 
 
-    if (!tem_minusculas(tab, l, c))              /* se já não há incógnitas... */
-        return verificaEstado(tab, l, c);        /* ...verifica ligação final */
+    if (!tem_minusculas(tab, l, c))              // não há incógnitas 
+        return verificaEstado(tab, l, c);        // verifica ligação final 
 
     Coordenadas cel = escolhe_celula(tab, l, c);
 
-    /* 1) supor branco */
+    // supor que é branco 
     {
         char **tmp = duplicaTabuleiro(tab, l, c);
         pintaBranco(tmp, l, c, cel);
@@ -184,7 +184,7 @@ int resolverJogo(char **tab, int l, int c) {
         free(tmp);
     }
 
-    /* 2) supor # */
+    // supor que é #
     {
         char **tmp = duplicaTabuleiro(tab, l, c);
         riscaQuadrado(tmp, l, c, cel);
@@ -200,5 +200,5 @@ int resolverJogo(char **tab, int l, int c) {
         free(tmp);
     }
 
-    return 0;                                    /* nenhum ramo resultou */
+    return 0; // nenhum ramo resultou 
 }
