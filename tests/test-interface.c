@@ -1,9 +1,9 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 #include <string.h>
-#include "interface.h"
-#include "tabuleiro.h"
-#include "stack.h"
+#include "../include/interface.h"
+#include "../include/tabuleiro.h"
+#include "../include/stack.h"
 
 static void preencher(char **t,int l,int c){
     char init[5][5] = {

@@ -1,7 +1,7 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "tabuleiro.h"
+#include "../include/tabuleiro.h"
 
 static void preencherTabuleiroTeste(char **t, int l, int c) {
     char init[5][5] = {

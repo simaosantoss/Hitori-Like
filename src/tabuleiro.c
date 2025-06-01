@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "../include/tabuleiro.h"
 
-/* criação do tabuleiro */
+// criação do tabuleiro 
 char **criaTabuleiro(int linhas, int colunas) {
     char **t = malloc(linhas * sizeof *t);
     for (int i = 0; i < linhas; ++i)
@@ -23,7 +23,7 @@ void imprimeTabuleiro(char **t, int l, int c) {
     }
 }
 
-/* primitivas de edição */
+// primitivas de edição 
 int pintaBranco(char **t, int l, int c, Coordenadas p) {
     if (p.x < 0 || p.x >= c || p.y < 0 || p.y >= l) {
         puts("As coordenadas estão fora do tabuleiro.");
@@ -67,18 +67,18 @@ int converteParaMinuscula(char **t, Coordenadas p) {
     return 1;
 }
 
-/* Implementação do comando a */
+// Implementação do comando a 
 static int risca_replicas(char **tab, int l, int c) {
     int mudou = 0;
     for (int y = 0; y < l; ++y)
         for (int x = 0; x < c; ++x)
             if (isupper(tab[y][x])) {
                 char target = tolower(tab[y][x]);
-                /* linha */
+                // linha 
                 for (int xx = 0; xx < c; ++xx)
                     if (islower(tab[y][xx]) && tab[y][xx] == target)
                         tab[y][xx] = '#', mudou = 1;
-                /* coluna */
+                // coluna 
                 for (int yy = 0; yy < l; ++yy)
                     if (islower(tab[yy][x]) && tab[yy][x] == target)
                         tab[yy][x] = '#', mudou = 1;
@@ -117,7 +117,7 @@ int aplica_comando_A(char **tab, int l, int c) {
     return total;
 }
 
-/* helpers/aux para o coamndo R */
+// auxiliares para o comando R 
 char **duplicaTabuleiro(char **src, int l, int c) {
     char **new = criaTabuleiro(l, c);
     for (int y = 0; y < l; ++y)
@@ -157,48 +157,123 @@ static Coordenadas escolhe_celula(char **t, int l, int c) {
     return (Coordenadas){-1, -1};
 }
 
-// backtracking (comando R)
+// verifica, nos brancos atuais, se ainda é possível conectá-los através de células que não sejam '#'. Se houver duas partes completamente isoladas por '#', retorna 0. 
+static int conexao_possivel(char **tab, int l, int c) {
+    // 1) Conta quantas maiúsculas há e guarda a posição da primeira
+    int totalBrancas = 0;
+    int sx = -1, sy = -1;
+    for (int y = 0; y < l; ++y) {
+        for (int x = 0; x < c; ++x) {
+            if (isupper(tab[y][x])) {
+                totalBrancas++;
+                if (sx < 0) {
+                    sx = x;
+                    sy = y;
+                }
+            }
+        }
+    }
+    if (totalBrancas <= 1) {
+        // Ou não há brancas, ou só há uma: está sempre “conectável”
+        return 1;
+    }
+
+    // 2) BFS que começa em (sy, sx), mas navega por TODAS as células != '#'
+    bool *vis = calloc(l * c, sizeof(bool));
+    int *qx  = malloc(l * c * sizeof(int));
+    int *qy  = malloc(l * c * sizeof(int));
+    int head = 0, tail = 0;
+
+    qx[tail] = sx;
+    qy[tail] = sy;
+    tail++;
+    vis[sy * c + sx] = true;
+
+    int brancasAlcancadas = 0;
+    const int dx[4] = {1, -1, 0, 0};
+    const int dy[4] = {0, 0, 1, -1};
+
+    while (head < tail) {
+        int x = qx[head];
+        int y = qy[head];
+        head++;
+        if (isupper(tab[y][x])) {
+            brancasAlcancadas++;
+        }
+        for (int k = 0; k < 4; ++k) {
+            int nx = x + dx[k];
+            int ny = y + dy[k];
+            if (nx < 0 || nx >= c || ny < 0 || ny >= l) continue;
+            if (tab[ny][nx] == '#')      continue; // não podemos atravessar casas riscadas
+            int idx = ny * c + nx;
+            if (vis[idx])               continue;
+            vis[idx] = true;
+            qx[tail] = nx;
+            qy[tail] = ny;
+            tail++;
+        }
+    }
+
+    free(vis);
+    free(qx);
+    free(qy);
+
+    // Se o número de brancas alcançadas for menor que o total de brancas, há um corte irremediável.
+    return (brancasAlcancadas == totalBrancas);
+}
+
+// backtracking (comando R) (vou meter por passos para perceberem o que fiz)
 int resolverJogo(char **tab, int l, int c) {
-    aplica_comando_A(tab, l, c);                 // 1a propagação 
+    // 1ª propagação
+    aplica_comando_A(tab, l, c);
+
+    // 1.a) Testa regras básicas; se falhar, descartar
     if (!regrasBasicasOk(tab, l, c))
-        return 0;                                // descarta ramos impossíveis 
+        return 0;
 
-    if (!tem_minusculas(tab, l, c))              // não há incógnitas 
-        return verificaEstado(tab, l, c);        // verifica ligação final 
+    // 1.b) testa se as brancas atuais ainda podem ficar todas conectadas
+    if (!conexao_possivel(tab, l, c))
+        return 0;
 
+    // 2) Se não há mais minúsculas, estamos num “estado terminal”:
+    if (!tem_minusculas(tab, l, c)) {
+        // Usar verificaEstado para confirmar ligação final
+        return verificaEstado(tab, l, c);
+    }
+
+    // 3) Há minúsculas -> escolhe uma célula para ramificar
     Coordenadas cel = escolhe_celula(tab, l, c);
 
-    // supor que é branco 
+    // 3.a) tentar “branco” nessa célula
     {
         char **tmp = duplicaTabuleiro(tab, l, c);
         pintaBranco(tmp, l, c, cel);
         if (resolverJogo(tmp, l, c)) {
+            // se este ramo encontrar solução, copia resultado para 'tab' e retorna 1
             copiaTabuleiro(tab, tmp, l, c);
-            for (int i = 0; i < l; ++i)
-                free(tmp[i]);
+            for (int i = 0; i < l; ++i) free(tmp[i]);
             free(tmp);
             return 1;
         }
-        for (int i = 0; i < l; ++i)
-            free(tmp[i]);
+        // senão, libera tmp e tenta próximo ramo
+        for (int i = 0; i < l; ++i) free(tmp[i]);
         free(tmp);
     }
 
-    // supor que é #
+    // 3.b) tentar “#” nessa célula
     {
         char **tmp = duplicaTabuleiro(tab, l, c);
         riscaQuadrado(tmp, l, c, cel);
         if (resolverJogo(tmp, l, c)) {
             copiaTabuleiro(tab, tmp, l, c);
-            for (int i = 0; i < l; ++i)
-                free(tmp[i]);
+            for (int i = 0; i < l; ++i) free(tmp[i]);
             free(tmp);
             return 1;
         }
-        for (int i = 0; i < l; ++i)
-            free(tmp[i]);
+        for (int i = 0; i < l; ++i) free(tmp[i]);
         free(tmp);
     }
 
-    return 0; // nenhum ramo resultou 
+    // nenhum ramo deu certo -> sem solução
+    return 0;
 }

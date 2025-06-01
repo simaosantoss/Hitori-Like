@@ -1,5 +1,5 @@
 #include <CUnit/Basic.h>
-#include "stack.h"
+#include "../include/stack.h"
 
 void test_stack_push_pop(void) {
     StackMovimentos stack;
