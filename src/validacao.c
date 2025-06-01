@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "../include/tabuleiro.h"
 
-/*   Conectividade das casas brancas */
+//   Conectividade das casas brancas 
 int casasBrancasConectadas(char **tab, int l, int c) {
     int total = 0, sx = -1, sy = -1;
 
@@ -20,7 +20,7 @@ int casasBrancasConectadas(char **tab, int l, int c) {
             }
 
     if (total == 0)
-        return 1; /* não há brancas -> ligadas */
+        return 1; // não há brancas -> ligadas 
 
     bool *vis = calloc(l * c, sizeof *vis);
     int  *qx  = malloc(l * c * sizeof *qx);
@@ -62,7 +62,7 @@ int casasBrancasConectadas(char **tab, int l, int c) {
     return visit == total;
 }
 
-/* '#' tem de estar rodeado apenas por brancas */
+// '#' tem de estar rodeado apenas por brancas 
 int vizinhosSaoBrancos(char **tab, int l, int c, Coordenadas p) {
     const int dx[4] = {1, -1, 0, 0},
               dy[4] = {0, 0, 1, -1};
@@ -70,12 +70,12 @@ int vizinhosSaoBrancos(char **tab, int l, int c, Coordenadas p) {
     for (int k = 0; k < 4; ++k) {
         int nx = p.x + dx[k], ny = p.y + dy[k];
         if (nx < 0 || nx >= c || ny < 0 || ny >= l) continue;
-        if (!isupper(tab[ny][nx])) return 0; /* vizinho não é branco */
+        if (!isupper(tab[ny][nx])) return 0; // vizinho não é branco 
     }
     return 1;
 }
 
-/*duplicados, # mal vizinho, minúsculas */
+//duplicados, # mal vizinho, minúsculas 
 int regrasBasicas(char **tab, int l, int c,
                          int *dup, int *hash, int *minus) {
     int linha[l][26];

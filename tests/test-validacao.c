@@ -50,7 +50,6 @@ void testVizinhosSaoBrancos(void) {
     CU_ASSERT_EQUAL(vizinhosSaoBrancos(tab, l, c, p), 0);
 
     Coordenadas p2 = {0, 0};
-    // Este ponto tem vizinhos maiúsculos brancos? Se não, mudar esperado para 0
     CU_ASSERT_EQUAL(vizinhosSaoBrancos(tab, l, c, p2), 0);
 
     for (int i = 0; i < l; i++) free(tab[i]);

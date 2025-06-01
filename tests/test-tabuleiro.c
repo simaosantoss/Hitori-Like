@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include "../include/tabuleiro.h"
 
+// Cria um tabuleiro de teste
 static void preencherTabuleiroTeste(char **t, int l, int c) {
     char init[5][5] = {
         {'e','c','a','d','c'},
@@ -16,6 +17,7 @@ static void preencherTabuleiroTeste(char **t, int l, int c) {
             t[y][x] = init[y][x];
 }
 
+// Teste para verificar a criação do tabuleiro
 void testCriaTabuleiro(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c);
@@ -25,6 +27,7 @@ void testCriaTabuleiro(void) {
     free(tab);
 }
 
+// Teste para pintura válida de uma célula do tabuleiro
 void testPintaBrancoValido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); 
@@ -38,6 +41,7 @@ void testPintaBrancoValido(void) {
     free(tab);
 }
 
+// Teste para tentar pintar uma célula já branca
 void testPintaBrancoInvalido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); 
@@ -50,6 +54,7 @@ void testPintaBrancoInvalido(void) {
     free(tab);
 }
 
+// Teste para riscar um quadrado corretamente
 void testRiscaQuadradoValido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); 
@@ -64,6 +69,7 @@ void testRiscaQuadradoValido(void) {
     free(tab);
 }
 
+// Teste para tentativa de riscar um quadrado sem vizinhos brancos
 void testRiscaQuadradoInvalido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); 
@@ -75,6 +81,7 @@ void testRiscaQuadradoInvalido(void) {
     free(tab);
 }
 
+// Teste para conversão de célula para minúscula
 void testConverteParaMinuscula(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); 
@@ -88,6 +95,7 @@ void testConverteParaMinuscula(void) {
     free(tab);
 }
 
+// Teste para coordenadas inválidas
 void testCoordenadaInvalida(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c); 
@@ -140,7 +148,7 @@ void testComandoAIterativo(void) {
     free(tab);
 }
 
-
+// Teste para resolver um jogo basico
 void testResolverJogoSimples(void) {
     int l = 3, c = 3;
     char **tab = criaTabuleiro(l, c);

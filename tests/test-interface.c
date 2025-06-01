@@ -18,6 +18,7 @@ static void preencher(char **t,int l,int c){
             t[y][x] = init[y][x];
 }
 
+// Teste de uma pintura valida
 void testPintaValida(void){
     int l = 5, c = 5; 
     char **tab = criaTabuleiro(l, c); 
@@ -36,6 +37,7 @@ void testPintaValida(void){
     destruirStack(&st);
 }
 
+// Teste de pintar uma coordenada invalida
 void testPintaInvalidaCoord(void){
     int l = 5, c = 5; 
     char **tab = criaTabuleiro(l, c); 
@@ -47,6 +49,7 @@ void testPintaInvalidaCoord(void){
     destruirStack(&st);
 }
 
+// Teste para riscar um quadrado sem vizinhos brancos
 void testRiscaSemVizinhosBrancosPermitido(void){
     int l = 5, c = 5; 
     char **tab = criaTabuleiro(l, c); 
@@ -62,6 +65,7 @@ void testRiscaSemVizinhosBrancosPermitido(void){
     destruirStack(&st);
 }
 
+// Teste para riscar um quadrado válido e um inválido
 void testRiscaValidoEInvalido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c);
@@ -82,6 +86,7 @@ void testRiscaValidoEInvalido(void) {
     destruirStack(&st);
 }
 
+// Teste para converter caractere para minúscula
 void testConverterMinusculaValidoEInvalido(void) {
     int l = 5, c = 5;
     char **tab = criaTabuleiro(l, c);
@@ -98,6 +103,7 @@ void testConverterMinusculaValidoEInvalido(void) {
     libertaMemoria(tab, l);
 }
 
+// Teste para desfazer o ultimo movimento
 void testUndo(void){
     int l = 5, c = 5; 
     char **tab = criaTabuleiro(l, c); 
@@ -120,6 +126,7 @@ void testUndo(void){
     destruirStack(&st);
 }
 
+// Teste para desfazer ação com a stack vazia
 void testDesfazerVazio(void) {
     StackMovimentos st;
     initStack(&st);
@@ -137,6 +144,7 @@ void testPopVazio(void){
     destruirStack(&st);
 }
 
+// Teste para verificar se o tabuleiro original é guardado direito
 void testGuardaOriginal(void) {
     int l = 3, c = 3;
     char **tab = criaTabuleiro(l, c);

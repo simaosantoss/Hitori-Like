@@ -4,6 +4,7 @@
 #include <string.h>
 #include "../include/ficheiros.h"
 
+// Teste para verificar gravação e leitura de um tabuleiro válido
 void testGravarELerValido(void) {
     int linhas = 5, colunas = 5;
     char **tabuleiro = malloc(linhas * sizeof(char *));
@@ -15,6 +16,7 @@ void testGravarELerValido(void) {
         "accbb"
     };
 
+    // Aloca a memória e para o tabuleiro
     for (int i = 0; i < linhas; i++) {
         tabuleiro[i] = malloc(colunas * sizeof(char));
         for (int j = 0; j < colunas; j++) {
@@ -30,6 +32,7 @@ void testGravarELerValido(void) {
     CU_ASSERT_EQUAL(lidas, linhas);
     CU_ASSERT_EQUAL(cols, colunas);
 
+    // Verifica se o tabuleiro lido e igual ao original
     if (lido) {
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
@@ -42,6 +45,7 @@ void testGravarELerValido(void) {
         CU_FAIL("Falha a ler ficheiro válido");
     }
 
+    // loopzinho para libertar memoria
     for (int i = 0; i < linhas; i++) {
         free(tabuleiro[i]);
     }
@@ -49,12 +53,14 @@ void testGravarELerValido(void) {
     remove("testeOk.txt");
 }
 
+// Teste para um arquivo que n existe
 void testArquivoInexistente(void) {
     int linhas = 0, colunas = 0;
     char **tabuleiro = lerTabuleiroFicheiro("naoExiste.txt", &linhas, &colunas);
     CU_ASSERT_PTR_NULL(tabuleiro);
 }
 
+// Teste para um arquivo vazio
 void testFicheiroVazio(void) {
     FILE *f = fopen("vazio.txt", "w");
     fclose(f);
@@ -65,6 +71,7 @@ void testFicheiroVazio(void) {
     remove("vazio.txt");
 }
 
+// Teste para um arquivo com formato errado
 void testFormatoInvalido(void) {
     FILE *f = fopen("invalido.txt", "w");
     fprintf(f, "5 5\n");
@@ -76,7 +83,7 @@ void testFormatoInvalido(void) {
     int linhas = 0, colunas = 0;
     char **tabuleiro = lerTabuleiroFicheiro("invalido.txt", &linhas, &colunas);
 
-    // Verifica se tabuleiro é NULL ou não; não falha com CU_FAIL
+    // Verifica se tabuleiro é NULL ou não; 
     if (tabuleiro == NULL) {
         CU_PASS("Função devolveu NULL para ficheiro inválido (esperado).");
     } else {
@@ -87,6 +94,7 @@ void testFormatoInvalido(void) {
     remove("invalido.txt");
 }
 
+// Teste para tabuleiro de dimensões inconsistentes
 void testDimensoesInconsistentes(void) {
     FILE *f = fopen("dimensoes.txt", "w");
     fprintf(f, "3 3\n");
@@ -98,7 +106,7 @@ void testDimensoesInconsistentes(void) {
     int linhas = 0, colunas = 0;
     char **tabuleiro = lerTabuleiroFicheiro("dimensoes.txt", &linhas, &colunas);
 
-    // Verifica se tabuleiro é NULL ou não; não falha com CU_FAIL
+    // Verifica se tabuleiro é NULL ou não
     if (tabuleiro == NULL) {
         CU_PASS("Função devolveu NULL para dimensões inconsistentes (esperado).");
     } else {
