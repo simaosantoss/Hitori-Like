@@ -38,6 +38,8 @@ void testGravarELerValido(void) {
             free(lido[i]);
         }
         free(lido);
+    } else {
+        CU_FAIL("Falha a ler ficheiro válido");
     }
 
     for (int i = 0; i < linhas; i++) {
@@ -63,21 +65,48 @@ void testFicheiroVazio(void) {
     remove("vazio.txt");
 }
 
+// Teste para ficheiro com formato inválido (caracteres ou linhas inválidas)
 void testFormatoInvalido(void) {
     FILE *f = fopen("invalido.txt", "w");
-    fprintf(f, "isto nao tem letras do tabuleiro\noutra linha mal\n");
+    fprintf(f, "5 5\n");      // dimensões válidas
+    fprintf(f, "abc12\n");    // linha com caracteres inválidos
+    fprintf(f, "abcd\n");     // linha com tamanho errado
+    fprintf(f, "!!!!!\n");    // linha com caracteres inválidos
     fclose(f);
 
     int linhas = 0, colunas = 0;
     char **tabuleiro = lerTabuleiroFicheiro("invalido.txt", &linhas, &colunas);
+    
     if (tabuleiro == NULL) {
-        CU_FAIL("Erro esperado: Ficheiro inválido não deve ser lido corretamente");
+        CU_ASSERT_TRUE(1);
     } else {
         libertaMemoria(tabuleiro, linhas);
+        CU_FAIL("Erro esperado: Ficheiro inválido não deve ser lido corretamente");
     }
-
     remove("invalido.txt");
 }
+
+// Teste para ficheiro com dimensões inconsistentes (linhas com tamanhos diferentes)
+void testDimensoesInconsistentes(void) {
+    FILE *f = fopen("dimensoes.txt", "w");
+    fprintf(f, "3 3\n");      // dimensões 3x3
+    fprintf(f, "abc\n");
+    fprintf(f, "abcd\n");     // linha com um caracter a mais
+    fprintf(f, "abc\n");
+    fclose(f);
+
+    int linhas = 0, colunas = 0;
+    char **tabuleiro = lerTabuleiroFicheiro("dimensoes.txt", &linhas, &colunas);
+
+    if (tabuleiro == NULL) {
+        CU_ASSERT_TRUE(1);
+    } else {
+        libertaMemoria(tabuleiro, linhas);
+        CU_FAIL("Esperava NULL por dimensões inconsistentes");
+    }
+    remove("dimensoes.txt");
+}
+
 
 int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
@@ -93,6 +122,7 @@ int main(void) {
     CU_add_test(suite, "Ficheiro Inexistente", testArquivoInexistente);
     CU_add_test(suite, "Ficheiro Vazio", testFicheiroVazio);
     CU_add_test(suite, "Formato Invalido", testFormatoInvalido);
+    CU_add_test(suite, "Dimensoes Inconsistentes", testDimensoesInconsistentes);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

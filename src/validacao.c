@@ -6,7 +6,7 @@
 #include "../include/tabuleiro.h"
 
 /*   Conectividade das casas brancas */
-static int casasBrancasConectadas(char **tab, int l, int c) {
+int casasBrancasConectadas(char **tab, int l, int c) {
     int total = 0, sx = -1, sy = -1;
 
     for (int y = 0; y < l; ++y)
@@ -63,7 +63,7 @@ static int casasBrancasConectadas(char **tab, int l, int c) {
 }
 
 /* '#' tem de estar rodeado apenas por brancas */
-static int vizinhosSaoBrancos(char **tab, int l, int c, Coordenadas p) {
+int vizinhosSaoBrancos(char **tab, int l, int c, Coordenadas p) {
     const int dx[4] = {1, -1, 0, 0},
               dy[4] = {0, 0, 1, -1};
 
@@ -76,7 +76,7 @@ static int vizinhosSaoBrancos(char **tab, int l, int c, Coordenadas p) {
 }
 
 /*duplicados, # mal vizinho, minúsculas */
-static int regrasBasicas(char **tab, int l, int c,
+int regrasBasicas(char **tab, int l, int c,
                          int *dup, int *hash, int *minus) {
     int linha[l][26];
     int coluna[c][26];

@@ -30,7 +30,7 @@ void testPintaValida(void){
     CU_ASSERT_EQUAL(pintaBranco(tab, l, c, p), 1);
     Movimento m = {p.x, p.y, old, tab[0][0]}; 
     push(&st, m);
-    CU_ASSERT_PTR_NOT_NULL(st.topo);
+    if (!st.topo) CU_FAIL("Stack topo não deve ser NULL");
 
     libertaMemoria(tab, l); 
     destruirStack(&st);
@@ -62,6 +62,42 @@ void testRiscaSemVizinhosBrancosPermitido(void){
     destruirStack(&st);
 }
 
+void testRiscaValidoEInvalido(void) {
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c);
+    preencher(tab, l, c);
+    StackMovimentos st;
+    initStack(&st);
+
+    Coordenadas pValido = {2, 2};
+    Coordenadas pInvalido = {0, 0};
+
+    CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, pValido), 1);
+    CU_ASSERT_EQUAL(tab[2][2], '#');
+
+    pintaBranco(tab, l, c, pInvalido);
+    CU_ASSERT_EQUAL(riscaQuadrado(tab, l, c, pInvalido), 0);
+
+    libertaMemoria(tab, l);
+    destruirStack(&st);
+}
+
+void testConverterMinusculaValidoEInvalido(void) {
+    int l = 5, c = 5;
+    char **tab = criaTabuleiro(l, c);
+    preencher(tab, l, c);
+
+    Coordenadas pMaiuscula = {0, 0};
+    Coordenadas pMinuscula = {1, 1};
+
+    pintaBranco(tab, l, c, pMaiuscula);
+    CU_ASSERT_EQUAL(converteParaMinuscula(tab, pMaiuscula), 1);
+
+    CU_ASSERT_EQUAL(converteParaMinuscula(tab, pMinuscula), 0);
+
+    libertaMemoria(tab, l);
+}
+
 void testUndo(void){
     int l = 5, c = 5; 
     char **tab = criaTabuleiro(l, c); 
@@ -84,12 +120,38 @@ void testUndo(void){
     destruirStack(&st);
 }
 
+void testDesfazerVazio(void) {
+    StackMovimentos st;
+    initStack(&st);
+
+    Movimento m;
+    CU_ASSERT_EQUAL(pop(&st, &m), 0);
+    destruirStack(&st);
+}
+
 void testPopVazio(void){
     StackMovimentos st; 
     initStack(&st);
     Movimento m; 
     CU_ASSERT_EQUAL(pop(&st, &m), 0);
     destruirStack(&st);
+}
+
+void testGuardaOriginal(void) {
+    int l = 3, c = 3;
+    char **tab = criaTabuleiro(l, c);
+
+    for(int i=0; i<l; i++)
+        for(int j=0; j<c; j++)
+            tab[i][j] = 'a' + i*c + j;
+
+    guardaOriginal(tab, l, c);
+
+    CU_ASSERT_TRUE(1);
+
+    for(int i=0; i<l; i++)
+        free(tab[i]);
+    free(tab);
 }
 
 int main(void){
@@ -104,8 +166,12 @@ int main(void){
     CU_add_test(s, "Pintar válido", testPintaValida);
     CU_add_test(s, "Pintar inválido (coord)", testPintaInvalidaCoord);
     CU_add_test(s, "Riscar sem vizinhos brancos", testRiscaSemVizinhosBrancosPermitido);
+    CU_add_test(s, "Riscar válido e inválido", testRiscaValidoEInvalido);
+    CU_add_test(s, "Converter para minúscula válido e inválido", testConverterMinusculaValidoEInvalido);
     CU_add_test(s, "Desfazer movimento", testUndo);
+    CU_add_test(s, "Desfazer stack vazio", testDesfazerVazio);
     CU_add_test(s, "Pop em stack vazia", testPopVazio);
+    CU_add_test(s, "Guarda Original", testGuardaOriginal);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests(); 

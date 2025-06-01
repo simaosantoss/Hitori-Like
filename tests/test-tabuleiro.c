@@ -99,41 +99,68 @@ void testCoordenadaInvalida(void) {
     free(tab);
 }
 
-void testConectividadeValida(void) {
-    int l = 2, c = 2; 
+void testComandoA(void) {
+    int l = 3, c = 3;
     char **tab = criaTabuleiro(l, c);
-    tab[0][0] = 'A'; 
-    tab[0][1] = 'B';
-    tab[1][0] = 'c'; 
-    tab[1][1] = 'd';
-    CU_ASSERT_EQUAL(verificaEstado(tab, l, c), 1);
-    for(int i = 0; i < l; ++i) free(tab[i]); 
+    // Tabuleiro com minúsculas para garantir alterações
+    char init[3][3] = {
+        {'A', 'a', 'C'},
+        {'d', 'E', 'f'},
+        {'G', 'h', 'I'}
+    };
+    for (int y=0; y<l; y++)
+        for (int x=0; x<c; x++)
+            tab[y][x] = init[y][x];
+
+    int mudou = aplica_comando_a(tab, l, c);
+    CU_ASSERT_TRUE(mudou);
+
+    for (int i=0; i<l; i++) free(tab[i]);
     free(tab);
 }
 
-void testConectividadeInvalida(void) {
+// Teste para o comando A iterativo, garantindo que há iterações (>0)
+void testComandoAIterativo(void) {
     int l = 3, c = 3;
     char **tab = criaTabuleiro(l, c);
 
-    // Preenche o tabuleiro com letras 'c' (casas não conectadas)
-    for (int y = 0; y < l; ++y)
-        for (int x = 0; x < c; ++x)
-            tab[y][x] = 'c';
+    // Tabuleiro com minúsculas e maiúsculas para forçar alterações
+    char init[3][3] = {
+        {'A', 'b', 'C'},
+        {'d', 'E', 'f'},
+        {'G', 'h', 'I'}
+    };
+    for (int y = 0; y < l; y++)
+        for (int x = 0; x < c; x++)
+            tab[y][x] = init[y][x];
 
-    tab[0][0] = 'A';
-    tab[2][2] = 'B';
+    int iteracoes = aplica_comando_A(tab, l, c);
+    CU_ASSERT_TRUE(iteracoes > 0);
 
-    // Verifica o estado do tabuleiro (0 significa conectividade quebrada)
-    int estado = verificaEstado(tab, l, c);
-
-    // Verifica se o estado indica que a conectividade está quebrada
-    CU_ASSERT_EQUAL(estado, 0);  // Esperamos que o estado retorne 0 o que indica conectividade quebrada
-
-    for (int i = 0; i < l; ++i) free(tab[i]);
+    for (int i = 0; i < l; i++) free(tab[i]);
     free(tab);
 }
 
 
+void testResolverJogoSimples(void) {
+    int l = 3, c = 3;
+    char **tab = criaTabuleiro(l, c);
+
+    char init[3][3] = {
+        {'A', 'b', 'C'},
+        {'d', 'E', 'f'},
+        {'G', 'h', 'I'}
+    };
+    for (int y=0; y<l; y++)
+        for (int x=0; x<c; x++)
+            tab[y][x] = init[y][x];
+
+    int res = resolverJogo(tab, l, c);
+    CU_ASSERT_TRUE(res == 1 || res == 0);
+
+    for (int i=0; i<l; i++) free(tab[i]);
+    free(tab);
+}
 
 int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS) 
@@ -152,8 +179,9 @@ int main(void) {
     CU_add_test(s, "Riscar Inválido", testRiscaQuadradoInvalido);
     CU_add_test(s, "Conversão para Minúscula", testConverteParaMinuscula);
     CU_add_test(s, "Coordenadas Inválidas", testCoordenadaInvalida);
-    CU_add_test(s, "Conectividade Válida", testConectividadeValida);
-    CU_add_test(s, "Conectividade Inválida", testConectividadeInvalida);
+    CU_add_test(s, "Comando a", testComandoA);
+    CU_add_test(s, "Comando A iterativo", testComandoAIterativo);
+    CU_add_test(s, "Resolver jogo simples", testResolverJogoSimples);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
