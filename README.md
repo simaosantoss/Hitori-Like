@@ -8,6 +8,7 @@
 ## ℹ️ About
 
 Hitori-Like is a completed puzzle game inspired by the classic *Hitori* game, developed in C as part of the Laboratórios de Informática II course (1st year, 2nd semester) at the University of Minho (2024/25).  
+
 Full project specification in `Projeto.pdf`.
 
 ---
