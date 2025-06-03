@@ -16,6 +16,7 @@ Full project specification in `Projeto.pdf`.
 ## ✨ Description
 
 Solve a board of letters by painting cells white (uppercase) or crossing them out (`#`) following uniqueness, adjacency, and connectivity rules.  
+
 Includes an interactive command-line interface with loading, saving, solving, undo, and validation features.
 
 ---
@@ -127,6 +128,7 @@ To run the program:
 ## 🇵🇹 Language
 
 The game interface and commands are in Portuguese, as this project was developed for a Portuguese university course.  
+
 Command syntax and instructions follow Portuguese conventions.
 
 ---
