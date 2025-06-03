@@ -5,21 +5,21 @@
 
 ---
 
-## About
+## ℹ️ About
 
 Hitori-Like is a completed puzzle game inspired by the classic *Hitori* game, developed in C as part of the Laboratórios de Informática II course (1st year, 2nd semester) at the University of Minho (2024/25).  
 Full project specification in `Projeto.pdf`.
 
 ---
 
-## Description
+## ✨ Description
 
 Solve a board of letters by painting cells white (uppercase) or crossing them out (`#`) following uniqueness, adjacency, and connectivity rules.  
 Includes an interactive command-line interface with loading, saving, solving, undo, and validation features.
 
 ---
 
-## Game Rules
+## 🏸 Game Rules
 
 - Each cell initially contains a lowercase letter.
 - In each row and column, only one painted white (uppercase) instance of each symbol is allowed.
@@ -29,7 +29,7 @@ Includes an interactive command-line interface with loading, saving, solving, un
 
 ---
 
-## Features
+## 🛠️ Features
 
 - Load and save boards from files, supporting multiple difficulty levels.
 - Visualize the board with coordinates.
@@ -42,7 +42,7 @@ Includes an interactive command-line interface with loading, saving, solving, un
 
 ---
 
-## Available Commands
+## 🕹️ Available Commands
 
 | Command           | Description                                                 |
 |-------------------|-------------------------------------------------------------|
@@ -60,7 +60,7 @@ Includes an interactive command-line interface with loading, saving, solving, un
 
 ---
 
-## Board File Format
+## ♟️ Board File Format
 
 The board file format is as follows:
 
@@ -88,7 +88,7 @@ accbb
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
 - `src/main.c` — Entry point, REPL loop and main control.
 - `src/interface.c` — User interaction and board display.
@@ -99,7 +99,7 @@ accbb
 
 ---
 
-## Compilation and Running
+## 👨‍💻 Compilation and Running
 
 The project includes a Makefile with these targets:
 
@@ -115,7 +115,7 @@ To run the program:
 
 ---
 
-## Testing
+## 📄 Testing
 
 - Uses CUnit testing framework.  
 - Tests cover all rules and functionalities to ensure robustness.  
@@ -123,14 +123,14 @@ To run the program:
 
 ---
 
-## Language
+## 🇵🇹 Language
 
 The game interface and commands are in Portuguese, as this project was developed for a Portuguese university course.  
 Command syntax and instructions follow Portuguese conventions.
 
 ---
 
-## Authors
+## 👥 Authors
 
 - [Simão Santos](https://github.com/simaosantoss)  
 - [Afonso Coelho](https://github.com/ACoelho-07)  
