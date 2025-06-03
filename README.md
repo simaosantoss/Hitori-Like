@@ -62,7 +62,7 @@ Includes an interactive command-line interface with loading, saving, solving, un
 
 ---
 
-## ♟️ Board File Format
+## 🎲 Board File Format
 
 The board file format is as follows:
 
