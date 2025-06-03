@@ -7,9 +7,9 @@
 
 ## ℹ️ About
 
-Hitori-Like is a completed puzzle game inspired by the classic *Hitori* game, developed in C as part of the Laboratórios de Informática II course (1st year, 2nd semester) at the University of Minho (2024/25).  
+Hitori-Like is a completed puzzle game inspired by the classic [*Hitori*](https://en.wikipedia.org/wiki/Hitori) game, developed in C as part of the Laboratórios de Informática II course (1st year, 2nd semester) at the University of Minho (2024/25).
 
-Full project specification in `Projeto.pdf`.
+Full project specification in the [Projeto.pdf](./Projeto.pdf) file.
 
 ---
 
@@ -21,7 +21,7 @@ Includes an interactive command-line interface with loading, saving, solving, un
 
 ---
 
-## 🏸 Game Rules
+## 📜 Game Rules
 
 - Each cell initially contains a lowercase letter.
 - In each row and column, only one painted white (uppercase) instance of each symbol is allowed.
@@ -87,17 +87,6 @@ bddce
 cdeeb
 accbb
 ```
-
----
-
-## 📂 Project Structure
-
-- `src/main.c` — Entry point, REPL loop and main control.
-- `src/interface.c` — User interaction and board display.
-- `src/tabuleiro.c` — Board manipulation functions.
-- `src/validacao.c` — Rule validation functions.
-- `src/ficheiros.c` — File reading and writing functions.
-- `src/stack.c` — Stack implementation for undo functionality.
 
 ---
 
