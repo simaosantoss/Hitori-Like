@@ -122,7 +122,7 @@ Command syntax and instructions follow Portuguese conventions.
 
 ---
 
-## 👥 Authors
+### 👥 Authors
 
 - [Simão Santos](https://github.com/simaosantoss)  
 - [Afonso Coelho](https://github.com/ACoelho-07)  
