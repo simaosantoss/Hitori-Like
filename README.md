@@ -125,5 +125,5 @@ Command syntax and instructions follow Portuguese conventions.
 ### 👥 Authors
 
 - [Simão Santos](https://github.com/simaosantoss)  
-- [Afonso Coelho](https://github.com/ACoelho-07)  
 - [João Falcão](https://github.com/Falcao06)
+-  [Afonso Coelho](https://github.com/ACoelho-07)
