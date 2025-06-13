@@ -4,6 +4,8 @@
 ![Language](https://img.shields.io/badge/language-C-blue)  
 
 ---
+> 🏆 **Final Grade: 20/20**
+---
 
 ## ℹ️ About
 
